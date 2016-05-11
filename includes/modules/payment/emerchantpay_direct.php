@@ -41,7 +41,7 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_DIRECT_CODE;
-        $this->version = "1.0.0";
+        $this->version = "1.0.1";
         parent::__construct();
     }
 
@@ -486,9 +486,13 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
                 'notification' =>
                     EMerchantPayDirectNotification::buildNotificationUrl(),
                 'return_success' =>
-                    EMerchantPayDirectNotification::buildReturnURL('success'),
+                    EMerchantPayDirectNotification::buildReturnURL(
+                        EMerchantPayDirectNotification::ACTION_SUCCESS
+                    ),
                 'return_failure' =>
-                    EMerchantPayDirectNotification::buildReturnURL('failure')
+                    EMerchantPayDirectNotification::buildReturnURL(
+                        EMerchantPayDirectNotification::ACTION_FAILURE
+                    )
             );
         }
 

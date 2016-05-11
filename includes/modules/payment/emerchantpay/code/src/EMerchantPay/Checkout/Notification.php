@@ -176,6 +176,27 @@ class Notification extends \EMerchantPay\Base\Notification
     }
 
     /**
+     * Process Return Action
+     * @param string $action
+     * @return void
+     */
+    protected static function processReturnAction($action)
+    {
+        switch ($action) {
+            case static::ACTION_CANCEL:
+                if (isset($_SESSION['order_summary']) && isset($_SESSION['order_summary']['order_number'])) {
+                    EMerchantPayCheckoutTransaction::setOrderStatus(
+                        $_SESSION['order_summary']['order_number'],
+                        EMerchantPayCheckoutSettings::getCanceledOrderStatusID()
+                    );
+                }
+                break;
+        }
+
+        parent::processReturnAction($action);
+    }
+
+    /**
      * Build Return URL from Genesis
      * @param string $action
      * @return string

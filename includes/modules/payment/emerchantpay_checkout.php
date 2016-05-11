@@ -302,7 +302,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.0.0";
+        $this->version = "1.0.1";
         parent::__construct();
     }
 
@@ -404,11 +404,17 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
             'notification'   =>
                 EMerchantPayCheckoutNotification::buildNotificationUrl(),
             'return_success' =>
-                EMerchantPayCheckoutNotification::buildReturnURL('success'),
+                EMerchantPayCheckoutNotification::buildReturnURL(
+                    EMerchantPayCheckoutNotification::ACTION_SUCCESS
+                ),
             'return_failure' =>
-                EMerchantPayCheckoutNotification::buildReturnURL('failure'),
+                EMerchantPayCheckoutNotification::buildReturnURL(
+                    EMerchantPayCheckoutNotification::ACTION_FAILURE
+                ),
             'return_cancel' =>
-                EMerchantPayCheckoutNotification::buildReturnURL('cancel')
+                EMerchantPayCheckoutNotification::buildReturnURL(
+                    EMerchantPayCheckoutNotification::ACTION_CANCEL
+                )
         );
 
         $data->order = $order;

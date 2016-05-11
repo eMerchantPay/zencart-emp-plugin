@@ -97,8 +97,12 @@ class Settings extends \EMerchantPay\Base\Settings
     {
         $transaction_types = static::getSetting("TRANSACTION_TYPES");
         return
-            array_filter(
-                explode(',', $transaction_types)
+            array_map(
+                'trim',
+                explode(
+                    ',',
+                    $transaction_types
+                )
             );
     }
 
