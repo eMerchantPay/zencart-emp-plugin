@@ -343,9 +343,24 @@ abstract class PaymentMethod extends \base
 
             if (isset($this->responseObject->redirect_url)) {
                 zen_redirect($this->responseObject->redirect_url);
+            } else {
+                $this->processUpdateOrder($insert_id);
             }
         }
         return true;
+    }
+
+    /**
+     * Updates Order Status and created Order Status History
+     * from the Gateway Response
+     * @param int $orderId
+     * @return bool
+     */
+    protected function processUpdateOrder($orderId)
+    {
+        return
+            isset($this->responseObject) &&
+            isset($this->responseObject->status);
     }
 
     /**

@@ -41,7 +41,7 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_DIRECT_CODE;
-        $this->version = "1.0.1";
+        $this->version = "1.0.2";
         parent::__construct();
     }
 
@@ -529,6 +529,78 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
             );
         }
 
+    }
+
+    /**
+     * Updates Order Status and created Order Status History
+     * from the Gateway Response
+     * @param int $orderId
+     * @return bool
+     */
+    protected function processUpdateOrder($orderId)
+    {
+        global $messageStack;
+
+        if (!parent::processUpdateOrder($orderId)) {
+            return false;
+        }
+
+        switch ($this->responseObject->status) {
+            case \Genesis\API\Constants\Transaction\States::APPROVED:
+                $orderStatusId = EMerchantPayDirectSettings::getProcessedOrderStatusID();
+                $isPaymentSuccessful = true;
+                break;
+            case \Genesis\API\Constants\Transaction\States::ERROR:
+            case \Genesis\API\Constants\Transaction\States::DECLINED:
+                $orderStatusId = EMerchantPayDirectSettings::getFailedOrderStatusID();
+                $isPaymentSuccessful = false;
+                break;
+            default:
+                $orderStatusId = EMerchantPayDirectSettings::getOrderStatusID();
+                $isPaymentSuccessful = false;
+        }
+
+        EMerchantPayDirectTransaction::setOrderStatus(
+            $orderId,
+            $orderStatusId
+        );
+
+        EMerchantPayDirectTransaction::performOrderStatusHistory(
+            array(
+                'type'            => 'Gateway Response',
+                'orders_id'       => $orderId,
+                'order_status_id' => $orderStatusId,
+                'payment'         => array(
+                    'unique_id' =>
+                        isset($this->responseObject->unique_id)
+                            ? $this->responseObject->unique_id
+                            : "",
+                    'status'    =>
+                        $this->responseObject->status,
+                    'message'   =>
+                        isset($this->responseObject->message)
+                            ? $this->responseObject->message
+                            : ""
+                )
+            )
+        );
+
+        if (!$isPaymentSuccessful) {
+            $messageStack->add_session(
+                'checkout_payment',
+                MODULE_PAYMENT_EMERCHANTPAY_DIRECT_MESSAGE_PAYMENT_FAILED,
+                'error'
+            );
+            zen_redirect(
+                zen_href_link(
+                    FILENAME_CHECKOUT_PAYMENT,
+                    '',
+                    'SSL'
+                )
+            );
+        }
+
+        return true;
     }
 
     /**
