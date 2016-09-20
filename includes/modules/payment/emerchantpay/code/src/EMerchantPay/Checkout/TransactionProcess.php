@@ -80,12 +80,14 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                     ->setBillingAddress1($data->order->billing['street_address'])
                     ->setBillingZipCode($data->order->billing['postcode'])
                     ->setBillingCity($data->order->billing['city'])
+                    ->setBillingState( self::getStateCode($data->order->billing) )
                     ->setBillingCountry($data->order->billing['country']['iso_code_2'])
                     ->setShippingFirstName($data->order->delivery['firstname'])
                     ->setShippingLastName($data->order->delivery['lastname'])
                     ->setShippingAddress1($data->order->delivery['street_address'])
                     ->setShippingZipCode($data->order->delivery['postcode'])
                     ->setShippingCity($data->order->delivery['city'])
+                    ->setShippingState( self::getStateCode($data->order->delivery) )
                     ->setShippingCountry($data->order->delivery['country']['iso_code_2'])
                     ->setLanguage($data->language_id);
 

@@ -328,7 +328,9 @@ class Transaction
      */
     public static function getCanVoidTransaction($transaction)
     {
-        return (in_array($transaction['type'], array(
+        return (
+            $transaction['status'] == \Genesis\API\Constants\Transaction\States::APPROVED &&
+            in_array($transaction['type'], array(
                 \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
                 \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
                 \Genesis\API\Constants\Transaction\Types::CAPTURE,

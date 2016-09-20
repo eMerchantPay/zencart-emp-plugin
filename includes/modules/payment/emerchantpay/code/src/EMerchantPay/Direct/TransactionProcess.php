@@ -19,7 +19,7 @@
 
 namespace EMerchantPay\Direct;
 
-use \EMerchantPay\Common as EMerchantPayCommom;
+use \EMerchantPay\Common as EMerchantPayCommon;
 use \EMerchantPay\Direct\Settings as EMerchantPayDirectSettings;
 
 class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
@@ -99,7 +99,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 ->request()
                     ->setTransactionId( $data->transaction_id )
                     ->setRemoteIp(
-                        EMerchantPayCommom::getServerRemoteAddress()
+                        EMerchantPayCommon::getServerRemoteAddress()
                     )
                     ->setUsage( 'ZenCart Electronic Transaction' )
                     ->setCurrency( $data->currency )
@@ -116,14 +116,14 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                     ->setBillingAddress1( $data->order->billing['street_address'] )
                     ->setBillingZipCode( $data->order->billing['postcode'] )
                     ->setBillingCity( $data->order->billing['city'] )
-                    ->setBillingState( $data->order->billing['state'] )
+                    ->setBillingState( self::getStateCode($data->order->billing) )
                     ->setBillingCountry( $data->order->billing['country']['iso_code_2'] )
                     ->setShippingFirstName( $data->order->delivery['firstname'] )
                     ->setShippingLastName( $data->order->delivery['lastname'] )
                     ->setShippingAddress1( $data->order->delivery['street_address'] )
                     ->setShippingZipCode( $data->order->delivery['postcode'] )
                     ->setShippingCity( $data->order->delivery['city'] )
-                    ->setShippingState( $data->order->delivery['state'] )
+                    ->setShippingState( self::getStateCode($data->order->delivery) )
                     ->setShippingCountry( $data->order->delivery['country']['iso_code_2'] );
 
             if (isset($data->urls)) {

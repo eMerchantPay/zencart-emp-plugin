@@ -179,4 +179,25 @@ class TransactionProcess
     public static function setTerminalToken($reference_id)
     {
     }
+
+    /**
+     * Gets state code (zone code) if available,
+     * otherwise gets state name (zone name)
+     *
+     * @param array $address
+     *
+     * @return string
+     */
+    protected static function getStateCode($address)
+    {
+        $state = $address['state'];
+
+        if (true && isset($address['country_id']) && zen_not_null($address['country_id'])) {
+            if (isset($address['zone_id']) && zen_not_null($address['zone_id'])) {
+            $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
+            }
+        }
+
+        return $state;
+    }
 }
