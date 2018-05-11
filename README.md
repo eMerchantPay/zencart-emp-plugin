@@ -1,14 +1,14 @@
-eMerchantPay Gateway Module for Zen Cart
+emerchantpay Gateway Module for Zen Cart
 ======================================
 
-This is a Payment Module for Zen Cart, that gives you the ability to process payments through eMerchantPay's Payment Gateway - Genesis.
+This is a Payment Module for Zen Cart, that gives you the ability to process payments through emerchantpay's Payment Gateway - Genesis.
 
 Requirements
 ------------
 
 * Zen Cart 1.5.x
 * [GenesisPHP v1.4](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
-* PCI-certified server in order to use ```eMerchantPay Direct```
+* PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements
 ------------
@@ -28,7 +28,7 @@ Installation (Manual)
 * Upload the contents of folder (excluding ```README.md``` and ```YOUR_ADMIN```) to the ```<root>``` folder of your Zen Cart installation
 * Upload the contents of folder ```YOUR_ADMIN``` to your ```<admin>``` folder of your Zen Cart installation
 * Log into ```Zen Cart Administration Area``` with your Administrator account
-* Go to ```Modules``` -> ```Payment``` -> Locate ```eMerchantPay Checkout``` or ```eMerchantPay Direct``` Module and click ```Install```
+* Go to ```Modules``` -> ```Payment``` -> Locate ```emerchantpay Checkout``` or ```emerchantpay Direct``` Module and click ```Install```
 * Click ```Edit```, enter your credentials and configure the plugin to your needs
 
 _Note_: If you have trouble with your credentials or terminal configuration, get in touch with our [support] team

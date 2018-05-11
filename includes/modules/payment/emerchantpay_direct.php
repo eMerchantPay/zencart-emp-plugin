@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 eMerchantPay Ltd.
+ * Copyright (C) 2018 emerchantpay Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,8 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author      eMerchantPay
- * @copyright   2016 eMerchantPay Ltd.
+ * @author      emerchantpay
+ * @copyright   2018 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -41,7 +41,7 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_DIRECT_CODE;
-        $this->version = "1.0.3";
+        $this->version = "1.1.0";
         parent::__construct();
     }
 

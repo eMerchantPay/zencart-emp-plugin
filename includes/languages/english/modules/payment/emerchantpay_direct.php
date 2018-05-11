@@ -1,21 +1,21 @@
 <?php
 /**
- * eMerchantPay Direct English Language file
+ * emerchantpay Direct English Language file
  *
  * Contains English translation for strings used in the
- * eMerchantPay Checkout module
+ * emerchantpay Checkout module
  *
  * @license     http://opensource.org/licenses/MIT The MIT License
- * @copyright   2016 eMerchantPay Ltd.
+ * @copyright   2018 emerchantpay Ltd.
  * @version     $Id:$
  * @since       1.0.0
  */
 
-define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_TITLE', 'eMerchantPay Direct');
-define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_PUBLIC_CHECKOUT_CONTAINER', '<img style="border: 0px none; margin-left: 50pt; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" /> <br> <span style="display: block; font-weight: bold; margin-left: 50pt;">eMerchantPay offers a secure way to pay for your order, using Credit/Debit/Prepaid Card</span>');
-define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_PUBLIC_TITLE', 'eMerchantPay Direct <img style="border: 0px none; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" />');
+define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_TITLE', 'emerchantpay Direct');
+define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_PUBLIC_CHECKOUT_CONTAINER', '<img style="border: 0px none; margin-left: 50pt; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" /> <br> <span style="display: block; font-weight: bold; margin-left: 50pt;">emerchantpay offers a secure way to pay for your order, using Credit/Debit/Prepaid Card</span>');
+define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_PUBLIC_TITLE', 'emerchantpay Direct <img style="border: 0px none; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" />');
 
-define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_DESCRIPTION', '<a href="https://www.emerchantpay.com" target="_blank" style="width: 50%; display: block; margin: 0px auto;"><img style="border: 0px none; margin: 0px; width: 100%;" src="images/emerchantpay/logos/emerchantpay.png"/></a> <br> Direct API - allow customers to enter their CreditCard information on your website. Note: You need PCI-DSS certificate in order to enable this payment method. <br/> <br/> <img style="border: 0px none; margin: 0 auto; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" /> <br/> <a href="https://www.emerchantpay.com" target="_blank" style="text-decoration:underline;font-weight:bold; display: block; text-align: center;">Visit eMerchantPay\'s Website</a> ');
+define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_DESCRIPTION', '<a href="https://www.emerchantpay.com" target="_blank" style="width: 50%; display: block; margin: 0px auto;"><img style="border: 0px none; margin: 0px; width: 100%;" src="images/emerchantpay/logos/emerchantpay.png"/></a> <br> Direct API - allow customers to enter their CreditCard information on your website. Note: You need PCI-DSS certificate in order to enable this payment method. <br/> <br/> <img style="border: 0px none; margin: 0 auto; display: block" src="images/emerchantpay/logos/emerchantpay_direct.png" /> <br/> <a href="https://www.emerchantpay.com" target="_blank" style="text-decoration:underline;font-weight:bold; display: block; text-align: center;">Visit emerchantpay\'s Website</a> ');
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_CATALOG_TITLE', 'Credit Card');  // Payment option title as displayed to the customer
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_CREDIT_CARD_TYPE', 'Card Type:');
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_TEXT_CREDIT_CARD_OWNER', 'Card Owner:');
@@ -50,7 +50,7 @@ define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_MESSAGE_ENTER_ALL_REQUIRED_DATA', 'Pl
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_MESSAGE_CHECK_CREDENTIALS', 'Please, make sure you\'ve properly entered your module credentials.');
 
 //entries
-define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_LABEL_ORDER_TRANS_TITLE', 'eMerchantPay Transactions');
+define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_LABEL_ORDER_TRANS_TITLE', 'emerchantpay Transactions');
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_LABEL_CAPTURE_TRAN_TITLE', 'Capture Transaction');
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_LABEL_REFUND_TRAN_TITLE', 'Refund Transaction');
 define('MODULE_PAYMENT_EMERCHANTPAY_DIRECT_LABEL_VOID_TRAN_TITLE', 'Void Transaction');

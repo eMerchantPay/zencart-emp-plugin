@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 eMerchantPay Ltd.
+ * Copyright (C) 2018 emerchantpay Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,8 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author      eMerchantPay
- * @copyright   2016 eMerchantPay Ltd.
+ * @author      emerchantpay
+ * @copyright   2018 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -45,7 +45,7 @@ class Installer extends \EMerchantPay\Base\Installer
         global $db, $messageStack;
 
         if (EMerchantPayCheckoutSettings::getIsInstalled()) {
-            $messageStack->add_session('eMerchantPay Checkout module already installed.', 'error');
+            $messageStack->add_session('emerchantpay Checkout module already installed.', 'error');
             zen_redirect(zen_href_link(FILENAME_MODULES, 'set=payment&module=' . EMERCHANTPAY_CHECKOUT_CODE, 'NONSSL'));
             return 'failed';
         }
@@ -63,8 +63,8 @@ class Installer extends \EMerchantPay\Base\Installer
         $sortOrderAttributes = "array(''maxlength'' => ''3'')";
         $requiredOptionsAttributes = "array(''required'' => ''required'')";
 
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Enable eMerchantPay Checkout Module', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('STATUS') . "', 'true', 'Do you want to process payments via eMerchantPay''s Genesis Gateway?', '6', '3', 'emp_zfg_draw_toggle(', 'emp_zfg_get_toggle_value', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Checkout Title', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('CHECKOUT_PAGE_TITLE') . "', 'Pay safely with eMerchantPay Checkout', 'This name will be displayed on the checkout page', '6', '4', 'emp_zfg_draw_input(null, ', now())");
+        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Enable emerchantpay Checkout Module', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('STATUS') . "', 'true', 'Do you want to process payments via emerchantpay''s Genesis Gateway?', '6', '3', 'emp_zfg_draw_toggle(', 'emp_zfg_get_toggle_value', now())");
+        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Checkout Title', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('CHECKOUT_PAGE_TITLE') . "', 'Pay safely with emerchantpay Checkout', 'This name will be displayed on the checkout page', '6', '4', 'emp_zfg_draw_input(null, ', now())");
         $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Genesis API Username', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('USERNAME') . "', '', 'Enter your Username, required for accessing the Genesis Gateway', '6', '4', 'emp_zfg_draw_input({$requiredOptionsAttributes}, ', now())");
         $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Genesis API Password', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('PASSWORD') . "', '', 'Enter your Password, required for accessing the Genesis Gateway', '6', '4', 'emp_zfg_draw_input({$requiredOptionsAttributes}, ', now())");
         $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Live Mode', '" . EMerchantPayCheckoutSettings::getCompleteSettingKey('ENVIRONMENT') . "', 'false', 'If disabled, transactions are going through our Staging (Test) server, NO MONEY ARE BEING TRANSFERRED', '6', '3', 'emp_zfg_draw_toggle(', 'emp_zfg_get_toggle_value', now())");
