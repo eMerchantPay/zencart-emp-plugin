@@ -102,6 +102,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                             ->addTransactionType($type);
                 }
             }
+            static::setTokenizationData($genesis->request());
 
             $genesis->execute();
 
@@ -115,6 +116,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 
     /**
      * Get Available Checkout Transaction Types
+     *
      * @return array
      */
     private static function getCheckoutTransactionTypes()
@@ -133,8 +135,6 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
             \Genesis\API\Constants\Payment\Methods::QIWI        =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::SAFETY_PAY  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::TELEINGRESO =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::TRUST_PAY   =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
@@ -158,16 +158,228 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
     }
 
     /**
+     * @param \stdClass $request Genesis request
+     *
+     * @return void
+     */
+    protected static function setTokenizationData($request)
+    {
+        $consumer = static::getConsumerFromDb();
+
+        if ($consumer !== false
+            && $consumer['customer_id'] != static::getCustomerId()
+        ) {
+            static::redirectToShowError();
+        }
+
+        if ($consumer === false) {
+            $consumer_id = static::getConsumerIdFromGenesisGateway();
+
+            if ($consumer_id !== 0) {
+                static::saveConsumerId($consumer_id);
+            }
+        } else {
+            $consumer_id = $consumer['consumer_id'];
+        }
+
+        if (!empty($consumer_id)) {
+            $request->setConsumerId($consumer_id);
+        }
+
+        if (EMerchantPayCheckoutSettings::isWpfTokenizationEnabled()) {
+            $request->setRememberCard(true);
+        }
+    }
+
+    /**
+     * Show error after being redirected
+     *
+     * @return void
+     */
+    protected static function redirectToShowError()
+    {
+        global $messageStack;
+
+        $messageStack->add_session(
+            'checkout_payment',
+            'Cannot process your request, please contact the administrator.',
+            'error'
+        );
+        zen_redirect(
+            zen_href_link(
+                FILENAME_CHECKOUT_PAYMENT,
+                'payment_error=emerchantpay_checkout',
+                'SSL'
+            )
+        );
+    }
+
+    /**
+     * Use Genesis API to get consumer ID
+     *
+     * @return int
+     */
+    protected static function getConsumerIdFromGenesisGateway()
+    {
+        global $order;
+
+        try {
+            $genesis = new \Genesis\Genesis('NonFinancial\Consumers\Retrieve');
+            $genesis->request()->setEmail($order->customer['email_address']);
+
+            $genesis->execute();
+
+            $response = $genesis->response()->getResponseObject();
+
+            if (static::isErrorResponse($response)) {
+                return 0;
+            }
+
+            return intval($response->consumer_id);
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks if Genesis response is an error
+     *
+     * @param \stdClass $response Genesis response
+     *
+     * @return bool
+     */
+    protected static function isErrorResponse($response)
+    {
+        $state = new \Genesis\API\Constants\Transaction\States($response->status);
+
+        return $state->isError();
+    }
+
+    /**
+     * Save consumer ID to DB
+     *
+     * @param int $consumer_id Consumer ID
+     *
+     * @return bool
+     */
+    public static function saveConsumerId($consumer_id)
+    {
+        global $db, $order;
+
+        if (empty($order->customer['email_address']) || empty($consumer_id)
+            || static::getCustomerId() === 0
+        ) {
+            return false;
+        }
+
+        $consumer = static::getConsumerFromDb();
+
+        if ($consumer !== false) {
+            return false;
+        }
+
+        $sql = '
+            INSERT INTO `' . TABLE_EMERCHANTPAY_CHECKOUT_CONSUMERS . '` (
+                `customer_id`,
+                `customer_email`,
+                `consumer_id`
+            )
+            VALUES (
+                :customer_id,
+                :customer_email,
+                :consumer_id
+            )
+        ';
+        $sql = $db->bindVars(
+            $sql,
+            ':customer_id',
+            static::getCustomerId(),
+            'integer'
+        );
+        $sql = $db->bindVars(
+            $sql,
+            ':customer_email',
+            $order->customer['email_address'],
+            'string'
+        );
+        $sql = $db->bindVars(
+            $sql,
+            ':consumer_id',
+            intval($consumer_id),
+            'integer'
+        );
+
+        $db->Execute($sql);
+
+        return true;
+    }
+
+    /**
+     * Get logged customer's ID
+     *
+     * @return int
+     *
+     * @SuppressWarnings(PHPMD)
+     */
+    public static function getCustomerId()
+    {
+        return intval($_SESSION['customer_id']);
+    }
+
+    /**
+     * Get consumer from DB
+     *
+     * @return array|bool
+     */
+    public static function getConsumerFromDb()
+    {
+        global $db, $order;
+
+        $query = $db->Execute(
+            $db->bindVars(
+                'SELECT
+                    *
+                  FROM
+                    `' . TABLE_EMERCHANTPAY_CHECKOUT_CONSUMERS . '`
+                  WHERE
+                    `customer_email` = :customer_email',
+                ':customer_email',
+                $order->customer['email_address'],
+                'string'
+            ),
+            false, // zf_limit
+            false, // zf_cache
+            0,     // zf_cachetime
+            true   // remove_from_queryCache
+        );
+
+        if ($query->RecordCount() !== 1) {
+            return false;
+        }
+
+        return $query->fields;
+    }
+
+    /**
      * Set Genesis Terminal Token
-     * @param string $reference_id
+     *
+     * @param string $reference_id Reference ID
+     *
+     * @throws \Genesis\Exceptions\ErrorAPI
+     * @throws \Genesis\Exceptions\InvalidArgument
+     * @throws \Genesis\Exceptions\InvalidMethod
+     * @throws \Genesis\Exceptions\InvalidResponse
      */
     public static function setTerminalToken($reference_id)
     {
-        $transaction = EMerchantPayCheckoutTransaction::getTransactionById($reference_id);
+        $transaction = EMerchantPayCheckoutTransaction::getTransactionById(
+            $reference_id
+        );
 
-        $token = (isset($transaction['terminal_token']) && !empty($transaction['terminal_token'])
-                    ? $transaction['terminal_token']
-                    : null
+        $token = (isset($transaction['terminal_token'])
+                  && !empty($transaction['terminal_token'])
+            ? $transaction['terminal_token']
+            : null
         );
 
         if (empty($token)) {
@@ -178,7 +390,10 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
             $reconcile->execute();
 
             if ($reconcile->response()->isSuccessful()) {
-                $token = $reconcile->response()->getResponseObject()->payment_transaction->terminal_token;
+                $token = $reconcile
+                    ->response()
+                    ->getResponseObject()
+                    ->payment_transaction->terminal_token;
             }
         }
 

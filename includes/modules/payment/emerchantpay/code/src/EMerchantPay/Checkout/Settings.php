@@ -51,7 +51,6 @@ class Settings extends \EMerchantPay\Base\Settings
             \Genesis\API\Constants\Transaction\Types::SALE                => "Sale",
             \Genesis\API\Constants\Transaction\Types::SALE_3D             => "Sale 3D",
             \Genesis\API\Constants\Transaction\Types::SOFORT              => "SOFORT",
-            \Genesis\API\Constants\Payment\Methods::TELEINGRESO           => "teleingreso",
             \Genesis\API\Constants\Payment\Methods::TRUST_PAY             => "TrustPay",
             \Genesis\API\Constants\Transaction\Types::WEBMONEY            => "WebMoney"
         );
@@ -85,7 +84,8 @@ class Settings extends \EMerchantPay\Base\Settings
         $keys = parent::getSettingKeys();
 
         static::appendSettingKey($keys, 'ENVIRONMENT', 'TRANSACTION_TYPES');
-        $keys[] = static::getPrefix() . "LANGUAGE";
+        $keys[] = static::getPrefix() . 'LANGUAGE';
+        $keys[] = static::getPrefix() . 'WPF_TOKENIZATION';
 
         return $keys;
     }

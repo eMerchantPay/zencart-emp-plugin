@@ -23,10 +23,23 @@ if (!defined('IS_ADMIN_FLAG')) {
 
 define('EMERCHANTPAY_CHECKOUT_CODE', 'emerchantpay_checkout');
 define('FILENAME_EMECHANTPAY_CHECKOUT_IPN', 'emerchantpay_checkout_ipn');
-define('EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX', 'MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_');
-define('TABLE_EMERCHANTPAY_CHECKOUT_TRANSACTIONS', DB_PREFIX . 'emerchantpay_checkout_transactions');
+define(
+    'EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX',
+    'MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_'
+);
+define(
+    'TABLE_EMERCHANTPAY_CHECKOUT_TRANSACTIONS',
+    DB_PREFIX . 'emerchantpay_checkout_transactions'
+);
+define(
+    'TABLE_EMERCHANTPAY_CHECKOUT_CONSUMERS',
+    DB_PREFIX . 'emerchantpay_checkout_consumers'
+);
 
 define('EMERCHANTPAY_DIRECT_CODE', 'emerchantpay_direct');
 define('FILENAME_EMECHANTPAY_DIRECT_IPN', 'emerchantpay_direct_ipn');
 define('EMERCHANTPAY_DIRECT_SETTINGS_PREFIX', 'MODULE_PAYMENT_EMERCHANTPAY_DIRECT_');
-define('TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS', DB_PREFIX . 'emerchantpay_direct_transactions');
+define(
+    'TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS',
+    DB_PREFIX . 'emerchantpay_direct_transactions'
+);

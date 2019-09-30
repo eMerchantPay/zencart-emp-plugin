@@ -296,4 +296,14 @@ abstract class Settings
     {
         return (int) static::getSetting("CANCELED_ORDER_STATUS_ID");
     }
+
+    /**
+     * Get WPF Tokenization setting value
+     *
+     * @return bool
+     */
+    public static function isWpfTokenizationEnabled()
+    {
+        return static::getBoolSetting('WPF_TOKENIZATION');
+    }
 }

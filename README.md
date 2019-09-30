@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * Zen Cart 1.5.x
-* [GenesisPHP v1.4](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
+* [GenesisPHP v1.17.0](https://github.com/GenesisGateway/genesis_php/releases/tag/1.17.0) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements

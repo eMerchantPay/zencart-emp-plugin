@@ -20,57 +20,45 @@
  *
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
-namespace Genesis\Interfaces;
+
+namespace Genesis\API\Request\Financial\Alternatives;
 
 /**
- * An interface for every network abstraction (cURL, Stream etc.).
+ * Class P24
  *
- * @package    Genesis
- * @subpackage Network
+ * Alternative payment method
+ *
+ * @package Genesis\API\Request\Financial\Alternatives
  */
-interface Network
+class P24 extends \Genesis\API\Request\Base\Financial\Alternative
 {
     /**
-     * Get HTTP Status code
-     *
-     * @return mixed
+     * Returns the Request transaction type
+     * @return string
      */
-    public function getStatus();
+    protected function getTransactionType()
+    {
+        return \Genesis\API\Constants\Transaction\Types::P24;
+    }
 
     /**
-     * Get the full response (headers/body)
+     * Set the required fields
      *
-     * @return mixed
+     * @return void
      */
-    public function getResponse();
+    protected function setRequiredFields()
+    {
+        parent::setRequiredFields();
 
-    /**
-     * Get response headers
-     *
-     * @return mixed
-     */
-    public function getResponseHeaders();
+        $requiredFieldValues = [
+            'billing_country' => [
+                'AD', 'AT', 'BE', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'EL', 'ES', 'NL',
+                'IE', 'IS', 'LT', 'LV', 'LU', 'MT', 'DE', 'NO', 'PL', 'PT', 'SM', 'SK',
+                'SI', 'CH', 'SE', 'HU', 'GB', 'IT', 'US', 'CA', 'JP', 'UA', 'BY', 'RU'
+            ],
+            'currency'        => \Genesis\Utils\Currency::getList()
+        ];
 
-    /**
-     * Get response body
-     *
-     * @return mixed
-     */
-    public function getResponseBody();
-
-    /**
-     * Set the request parameters
-     *
-     * @param $requestData
-     *
-     * @return mixed
-     */
-    public function prepareRequestBody($requestData);
-
-    /**
-     * Execute pre-set request
-     *
-     * @return mixed
-     */
-    public function execute();
+        $this->requiredFieldValues = \Genesis\Utils\Common::createArrayObject($requiredFieldValues);
+    }
 }

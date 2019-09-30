@@ -302,7 +302,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.1.0";
+        $this->version = "1.1.1";
         parent::__construct();
     }
 
@@ -422,7 +422,15 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
         $errorMessage = null;
 
         try {
-            $this->responseObject = EMerchantPayCheckoutTransactionProcess::pay($data);
+            $this->responseObject = EMerchantPayCheckoutTransactionProcess::pay(
+                $data
+            );
+
+            if (isset($this->responseObject->consumer_id)) {
+                EMerchantPayCheckoutTransactionProcess::saveConsumerId(
+                    $this->responseObject->consumer_id
+                );
+            }
 
             return true;
         } catch (\Genesis\Exceptions\ErrorAPI $api) {
