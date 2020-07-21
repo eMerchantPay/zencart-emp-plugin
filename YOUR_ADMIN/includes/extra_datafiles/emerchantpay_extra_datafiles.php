@@ -43,3 +43,4 @@ define(
     'TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS',
     DB_PREFIX . 'emerchantpay_direct_transactions'
 );
+define('PPRO_TRANSACTION_SUFFIX', '_ppro');

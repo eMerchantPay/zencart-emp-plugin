@@ -21,6 +21,11 @@ namespace EMerchantPay\Checkout;
 
 use \EMerchantPay\Checkout\Settings as EMerchantPayCheckoutSettings;
 use \EMerchantPay\Checkout\Transaction as EMerchantPayCheckoutTransaction;
+use EMerchantPay\Helpers\TransactionsHelper;
+use Genesis\API\Constants\Payment\Methods;
+use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes;
+use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes;
+use Genesis\API\Constants\Transaction\Types;
 
 class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 {
@@ -64,44 +69,35 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 
             $genesis
                 ->request()
-                    ->setTransactionId($data->transaction_id)
-                    ->setUsage('ZenCart Electronic Transaction')
-                    ->setDescription($data->description)
-                    ->setNotificationUrl($data->urls['notification'])
-                    ->setReturnSuccessUrl($data->urls['return_success'])
-                    ->setReturnFailureUrl($data->urls['return_failure'])
-                    ->setReturnCancelUrl($data->urls['return_cancel'])
-                    ->setCurrency($data->currency)
-                    ->setAmount($data->order->info['total'])
-                    ->setCustomerEmail($data->order->customer['email_address'])
-                    ->setCustomerPhone($data->order->customer['telephone'])
-                    ->setBillingFirstName($data->order->billing['firstname'])
-                    ->setBillingLastName($data->order->billing['lastname'])
-                    ->setBillingAddress1($data->order->billing['street_address'])
-                    ->setBillingZipCode($data->order->billing['postcode'])
-                    ->setBillingCity($data->order->billing['city'])
-                    ->setBillingState( self::getStateCode($data->order->billing) )
-                    ->setBillingCountry($data->order->billing['country']['iso_code_2'])
-                    ->setShippingFirstName($data->order->delivery['firstname'])
-                    ->setShippingLastName($data->order->delivery['lastname'])
-                    ->setShippingAddress1($data->order->delivery['street_address'])
-                    ->setShippingZipCode($data->order->delivery['postcode'])
-                    ->setShippingCity($data->order->delivery['city'])
-                    ->setShippingState( self::getStateCode($data->order->delivery) )
-                    ->setShippingCountry($data->order->delivery['country']['iso_code_2'])
-                    ->setLanguage($data->language_id);
+                ->setTransactionId($data->transaction_id)
+                ->setUsage('ZenCart Electronic Transaction')
+                ->setDescription($data->description)
+                ->setNotificationUrl($data->urls['notification'])
+                ->setReturnSuccessUrl($data->urls['return_success'])
+                ->setReturnFailureUrl($data->urls['return_failure'])
+                ->setReturnCancelUrl($data->urls['return_cancel'])
+                ->setCurrency($data->currency)
+                ->setAmount($data->order->info['total'])
+                ->setCustomerEmail($data->order->customer['email_address'])
+                ->setCustomerPhone($data->order->customer['telephone'])
+                ->setBillingFirstName($data->order->billing['firstname'])
+                ->setBillingLastName($data->order->billing['lastname'])
+                ->setBillingAddress1($data->order->billing['street_address'])
+                ->setBillingZipCode($data->order->billing['postcode'])
+                ->setBillingCity($data->order->billing['city'])
+                ->setBillingState(self::getStateCode($data->order->billing))
+                ->setBillingCountry($data->order->billing['country']['iso_code_2'])
+                ->setShippingFirstName($data->order->delivery['firstname'])
+                ->setShippingLastName($data->order->delivery['lastname'])
+                ->setShippingAddress1($data->order->delivery['street_address'])
+                ->setShippingZipCode($data->order->delivery['postcode'])
+                ->setShippingCity($data->order->delivery['city'])
+                ->setShippingState(self::getStateCode($data->order->delivery))
+                ->setShippingCountry($data->order->delivery['country']['iso_code_2'])
+                ->setLanguage($data->language_id);
 
-            foreach (static::getCheckoutTransactionTypes() as $type) {
-                if (is_array($type)) {
-                    $genesis
-                        ->request()
-                            ->addTransactionType($type['name'], $type['parameters']);
-                } else {
-                    $genesis
-                        ->request()
-                            ->addTransactionType($type);
-                }
-            }
+            static::_addTransactionTypesToGatewayRequest($genesis, $data->order);
+
             static::setTokenizationData($genesis->request());
 
             $genesis->execute();
@@ -115,46 +111,131 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
     }
 
     /**
+     * Add transaction types to the WPF Request
+     *
+     * @param \Genesis\Genesis $genesis Genesis Request
+     * @param array            $order   Order Attributes
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * @return void
+     * @throws \Genesis\Exceptions\ErrorParameter
+     */
+    private static function _addTransactionTypesToGatewayRequest($genesis, $order)
+    {
+        $types = static::_getCheckoutTransactionTypes();
+
+        foreach ($types as $transactionType) {
+            if (is_array($transactionType)) {
+                $genesis
+                    ->request()
+                    ->addTransactionType(
+                        $transactionType['name'],
+                        $transactionType['parameters']
+                    );
+
+                continue;
+            }
+
+            $parameters = static::_getCustomRequiredAttributes(
+                $transactionType,
+                $order
+            );
+
+            $genesis
+                ->request()
+                ->addTransactionType(
+                    $transactionType,
+                    $parameters
+                );
+
+            unset($parameters);
+        }
+    }
+
+    /**
+     * Retrieve custom required attributes for specific transaction type
+     *
+     * @param string $transactionType Transaction Type
+     * @param array  $order           Current order for the session
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * @return array
+     * @throws \Genesis\Exceptions\ErrorParameter
+     */
+    private static function _getCustomRequiredAttributes($transactionType, $order)
+    {
+        $parameters = array();
+
+        switch ($transactionType) {
+        case \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE:
+            $parameters = array(
+                'card_type'   =>
+                    CardTypes::VIRTUAL,
+                'redeem_type' =>
+                    RedeemTypes::INSTANT
+            );
+            break;
+        case \Genesis\API\Constants\Transaction\Types::IDEBIT_PAYIN:
+        case \Genesis\API\Constants\Transaction\Types::INSTA_DEBIT_PAYIN:
+            $parameters = array(
+                'customer_account_id' => static::getCurrentUserIdHash()
+            );
+            break;
+        case \Genesis\API\Constants\Transaction\Types::KLARNA_AUTHORIZE:
+            $items      = TransactionsHelper::getKlarnaCustomParamItems($order);
+            $parameters = $items->toArray();
+            break;
+        case \Genesis\API\Constants\Transaction\Types::TRUSTLY_SALE:
+            $userId = static::getCustomerId();
+            $trustlyUserId = empty($userId) ?
+                static::getCurrentUserIdHash() : $userId;
+
+            $parameters = array(
+                'user_id' => $trustlyUserId
+            );
+            break;
+        }
+
+        return $parameters;
+    }
+
+    /**
      * Get Available Checkout Transaction Types
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return array
      */
-    private static function getCheckoutTransactionTypes()
+    private static function _getCheckoutTransactionTypes()
     {
-        $processed_list = array();
+        $processedList = array();
+        $aliasMap      = array();
 
-        $selected_types = EMerchantPayCheckoutSettings::getTransactionTypes();
+        $selectedTypes = EMerchantPayCheckoutSettings::getTransactionTypes();
+        $pproSuffix    = PPRO_TRANSACTION_SUFFIX;
+        $methods       = Methods::getMethods();
 
-        $alias_map = array(
-            \Genesis\API\Constants\Payment\Methods::EPS         =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::GIRO_PAY    =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::PRZELEWY24  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::QIWI        =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::TRUST_PAY   =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-        );
+        foreach ($methods as $method) {
+            $aliasMap[$method . $pproSuffix] = Types::PPRO;
+        }
 
-        foreach ($selected_types as $selected_type) {
-            if (array_key_exists($selected_type, $alias_map)) {
-                $transaction_type = $alias_map[$selected_type];
+        foreach ($selectedTypes as $selectedType) {
+            if (array_key_exists($selectedType, $aliasMap)) {
+                $transactionType = $aliasMap[$selectedType];
 
-                $processed_list[$transaction_type]['name'] = $transaction_type;
+                $processedList[$transactionType]['name'] = $transactionType;
 
-                $processed_list[$transaction_type]['parameters'][] = array(
-                    'payment_method' => $selected_type
+                $processedList[$transactionType]['parameters'][] = array(
+                    'payment_method' => str_replace($pproSuffix, '', $selectedType)
                 );
             } else {
-                $processed_list[] = $selected_type;
+                $processedList[] = $selectedType;
             }
         }
 
-        return $processed_list;
+        return $processedList;
     }
 
     /**
@@ -327,6 +408,22 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
     }
 
     /**
+     * Generate unique hash from user Id
+     *
+     * @param int $length Hash Length
+     *
+     * @return string
+     */
+    public static function getCurrentUserIdHash($length = 30)
+    {
+        $userId = self::getCurrentUserIdHash();
+
+        $userHash = $userId > 0 ? sha1($userId) : md5(uniqid() . microtime(true));
+
+        return substr($userHash, 0, $length);
+    }
+
+    /**
      * Get consumer from DB
      *
      * @return array|bool
@@ -377,7 +474,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         );
 
         $token = (isset($transaction['terminal_token'])
-                  && !empty($transaction['terminal_token'])
+        && !empty($transaction['terminal_token'])
             ? $transaction['terminal_token']
             : null
         );

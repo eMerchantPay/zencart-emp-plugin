@@ -171,7 +171,12 @@ abstract class PaymentMethod extends \base
                 $data->currency = $transaction['currency'];
             }
 
-            $responseObject = $this->getReferenceTransactionResponse($transaction_type, $data);
+            $data->type  = $transaction['type'];
+
+            $responseObject = $this->getReferenceTransactionResponse(
+                $transaction_type,
+                $data
+            );
 
             if (isset($responseObject->unique_id)) {
                 $timestamp = EMerchantPayCommon::formatTimeStamp($responseObject->timestamp);

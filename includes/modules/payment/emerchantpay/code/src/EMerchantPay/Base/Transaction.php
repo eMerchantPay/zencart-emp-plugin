@@ -19,6 +19,8 @@
 
 namespace EMerchantPay\Base;
 
+use Genesis\API\Constants\Transaction\Types;
+
 class Transaction
 {
 
@@ -293,12 +295,9 @@ class Transaction
      */
     public static function getCanCaptureTransaction($transaction)
     {
-        return (in_array($transaction['type'], array(
-                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
-                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D
-                )) &&
-                ($transaction['status'] ==
-                    \Genesis\API\Constants\Transaction\States::APPROVED)
+        return (Types::canCapture($transaction['type'])
+            && ($transaction['status'] ==
+                \Genesis\API\Constants\Transaction\States::APPROVED)
         );
     }
 
@@ -309,37 +308,24 @@ class Transaction
      */
     public static function getCanRefundTransaction($transaction)
     {
-        return (in_array($transaction['type'], array(
-                    \Genesis\API\Constants\Transaction\Types::CAPTURE,
-                    \Genesis\API\Constants\Transaction\Types::SALE,
-                    \Genesis\API\Constants\Transaction\Types::SALE_3D,
-                    \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE,
-                    \Genesis\API\Constants\Transaction\Types::RECURRING_SALE
-                )) &&
-                ($transaction['status'] ==
-                    \Genesis\API\Constants\Transaction\States::APPROVED)
+        return (Types::canRefund($transaction['type'])
+                && ($transaction['status'] ==
+                \Genesis\API\Constants\Transaction\States::APPROVED)
         );
     }
 
     /**
      * Determine if transaction can be voided
+     *
      * @param array $transaction
+     *
      * @return bool
      */
     public static function getCanVoidTransaction($transaction)
     {
-        return (
-            $transaction['status'] == \Genesis\API\Constants\Transaction\States::APPROVED &&
-            in_array($transaction['type'], array(
-                \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
-                \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
-                \Genesis\API\Constants\Transaction\Types::CAPTURE,
-                \Genesis\API\Constants\Transaction\Types::SALE,
-                \Genesis\API\Constants\Transaction\Types::SALE_3D,
-                \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE,
-                \Genesis\API\Constants\Transaction\Types::RECURRING_SALE,
-                \Genesis\API\Constants\Transaction\Types::REFUND
-            ))
+        return (Types::canVoid($transaction['type'])
+                && ($transaction['status'] ==
+                \Genesis\API\Constants\Transaction\States::APPROVED)
         );
     }
 

@@ -21,6 +21,7 @@ namespace EMerchantPay\Direct;
 
 use \EMerchantPay\Common as EMerchantPayCommon;
 use \EMerchantPay\Direct\Settings as EMerchantPayDirectSettings;
+use Genesis\API\Constants\Transaction\Types;
 
 class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 {
@@ -78,21 +79,11 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
      */
     public static function pay($data)
     {
-        switch ($data->transaction_type) {
-            default:
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Authorize');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Authorize3D');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::SALE:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Sale');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::SALE_3D:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Sale3D');
-                break;
-        }
+        $genesis = new \Genesis\Genesis(
+            Types::getFinancialRequestClassForTrxType(
+                $data->transaction_type
+            )
+        );
 
         if (isset($genesis)) {
             $genesis

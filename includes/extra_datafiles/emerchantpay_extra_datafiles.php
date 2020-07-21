@@ -31,3 +31,4 @@ define('EMERCHANTPAY_DIRECT_CODE', 'emerchantpay_direct');
 define('FILENAME_EMECHANTPAY_DIRECT_IPN', 'emerchantpay_direct_ipn');
 define('EMERCHANTPAY_DIRECT_SETTINGS_PREFIX', 'MODULE_PAYMENT_EMERCHANTPAY_DIRECT_');
 define('TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS', DB_PREFIX . 'emerchantpay_direct_transactions');
+define('PPRO_TRANSACTION_SUFFIX', '_ppro');

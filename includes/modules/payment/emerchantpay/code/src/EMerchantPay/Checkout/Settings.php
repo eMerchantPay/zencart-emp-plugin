@@ -19,60 +19,83 @@
 
 namespace EMerchantPay\Checkout;
 
+use EMerchantPay\Helpers\TransactionsHelper;
+use Genesis\API\Constants\Payment\Methods;
+use Genesis\API\Constants\Transaction\Names;
+use Genesis\API\Constants\Transaction\Types;
+
+/**
+ * Class Settings
+ *
+ * @category EMerchantPay
+ *
+ * @package EMerchantPay\Checkout
+ * @author  Client Inegrations <client_integrations@emerchantpay.com>
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU, version 2 (GPL-2.0)
+ * @link    https://emerchantpay.com
+ */
 class Settings extends \EMerchantPay\Base\Settings
 {
     /**
      * Settings Values Prefix
+     *
      * @var string
      */
     static protected $prefix = EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX;
 
     /**
      * Gets a list of the available transaction types for a payment method
+     *
      * @return array
      */
     public static function getTransactionsList()
     {
-        return array(
-            \Genesis\API\Constants\Transaction\Types::ABNIDEAL            => "ABN iDEAL",
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE           => "Authorize",
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D        => "Authorize 3D",
-            \Genesis\API\Constants\Transaction\Types::CASHU               => "CashU",
-            \Genesis\API\Constants\Payment\Methods::EPS                   => "eps",
-            \Genesis\API\Constants\Payment\Methods::GIRO_PAY              => "GiroPay",
-            \Genesis\API\Constants\Transaction\Types::NETELLER            => "Neteller",
-            \Genesis\API\Constants\Payment\Methods::QIWI                  => "Qiwi",
-            \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE   => "PayByVoucher (Sale)",
-            \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_YEEPAY => "PayByVoucher (oBeP)",
-            \Genesis\API\Constants\Transaction\Types::PAYSAFECARD         => "PaySafeCard",
-            \Genesis\API\Constants\Payment\Methods::PRZELEWY24            => "Przelewy24",
-            \Genesis\API\Constants\Transaction\Types::POLI                => "POLi",
-            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY            => "SafetyPay",
-            \Genesis\API\Constants\Transaction\Types::SALE                => "Sale",
-            \Genesis\API\Constants\Transaction\Types::SALE_3D             => "Sale 3D",
-            \Genesis\API\Constants\Transaction\Types::SOFORT              => "SOFORT",
-            \Genesis\API\Constants\Payment\Methods::TRUST_PAY             => "TrustPay",
-            \Genesis\API\Constants\Transaction\Types::WEBMONEY            => "WebMoney"
+        $data = array();
+
+        $transactionTypes = Types::getWPFTransactionTypes();
+        $excludedTypes    = TransactionsHelper::getRecurringTransactionTypes();
+
+        // Exclude Transaction Types
+        $transactionTypes = array_diff($transactionTypes, $excludedTypes);
+
+        // Add PPRO types
+        $pproTypes = array_map(
+            function ($type) {
+                return $type . PPRO_TRANSACTION_SUFFIX;
+            },
+            Methods::getMethods()
         );
+
+        $transactionTypes = array_merge($transactionTypes, $pproTypes);
+        asort($transactionTypes);
+
+        foreach ($transactionTypes as $type) {
+            $name = Names::getName($type);
+            if (!Types::isValidTransactionType($type)) {
+                $name = strtoupper($type);
+            }
+
+            $data[$type] = $name;
+        }
+
+        return $data;
     }
 
+    /**
+     * Get available WPF languages
+     *
+     * @return array
+     */
     public static function getAvailableCheckoutLanguages()
     {
-        return array(
-            'en' => 'English',
-            'it' => 'Italian',
-            'es' => 'Spanish',
-            'fr' => 'French',
-            'de' => 'German',
-            'ja' => 'Japanese',
-            'zh' => 'Chinese',
-            'ar' => 'Arabic',
-            'pt' => 'Portuguese',
-            'tr' => 'Turkish',
-            'ru' => 'Russian',
-            'hi' => 'Hindi',
-            'bg' => 'Bulgarian'
-        );
+        $data     = array();
+        $isoCodes = \Genesis\API\Constants\i18n::getAll();
+
+        foreach ($isoCodes as $isoCode) {
+            $data[$isoCode] = TransactionsHelper::getLanguageByIsoCode($isoCode);
+        }
+
+        return $data;
     }
 
     /**
