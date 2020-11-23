@@ -25,6 +25,8 @@ use Genesis\API\Constants\Transaction\Types;
 class TransactionProcess
 {
 
+    const TRANSACTION_USAGE = 'Payment via';
+
     /**
      * Set Genesis Config Values (Ex. Login, Password, Token, etc)
      */
@@ -217,5 +219,15 @@ class TransactionProcess
         }
 
         return $state;
+    }
+
+    /**
+     * Return usage of transaction
+     *
+     * @return string
+     */
+    protected static function getUsage()
+    {
+        return self::TRANSACTION_USAGE . ' ' . STORE_NAME;
     }
 }

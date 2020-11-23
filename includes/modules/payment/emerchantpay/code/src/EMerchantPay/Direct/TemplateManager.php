@@ -253,10 +253,25 @@ abstract class TemplateManager
                 margin: 0px;
             }
 
+            .jp-card .jp-card-back {
+                margin: 0px;
+            }
+
             .card-wrapper-container, .card-controls-container {
                 float: left;
                 width: 100%;
                 text-align: center;
+            }
+
+            .jp-card .jp-card-front .jp-card-lower {
+                width: 100%;
+                left: 0;
+            }
+
+            .jp-card-number.jp-card-valid,
+            .jp-card-number.jp-card-invalid
+            {
+                margin-left: -15%;
             }
         </style>
     <?php

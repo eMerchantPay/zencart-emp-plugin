@@ -26,6 +26,9 @@ use \EMerchantPay\Checkout\TransactionProcess as EMerchantPayCheckoutTransaction
 
 abstract class PaymentMethod extends \base
 {
+
+    const PLATFORM_TRANSACTION_PREFIX = 'zencart-';
+
     /**
      * $code determines the internal 'code' name used to designate "this" payment module
      *
@@ -587,5 +590,17 @@ abstract class PaymentMethod extends \base
             $order_id
         );
         return true;
+    }
+
+    /**
+     * Used to generate transaction id to initial transaction
+     *
+     * @param string $prefix Custom to transaction id
+     *
+     * @return string
+     */
+    public static function generateTransactionId($prefix = '')
+    {
+        return (string)$prefix . md5(uniqid() . microtime(true));
     }
 }

@@ -302,7 +302,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.1.3";
+        $this->version = "1.1.4";
         parent::__construct();
     }
 
@@ -386,8 +386,9 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     {
         global $order, $messageStack;
 
+        $prefix = self::PLATFORM_TRANSACTION_PREFIX;
         $data = new stdClass();
-        $data->transaction_id = md5(uniqid() . microtime(true));
+        $data->transaction_id = self::generateTransactionId($prefix);
         $data->description = '';
 
         foreach ($order->products as $product) {

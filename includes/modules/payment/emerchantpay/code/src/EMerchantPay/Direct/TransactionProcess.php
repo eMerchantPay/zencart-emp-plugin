@@ -92,7 +92,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                     ->setRemoteIp(
                         EMerchantPayCommon::getServerRemoteAddress()
                     )
-                    ->setUsage( 'ZenCart Electronic Transaction' )
+                    ->setUsage(self::getUsage())
                     ->setCurrency( $data->currency )
                     ->setAmount( $data->order->info['total'] )
                     ->setCardHolder( $data->card_info['cc_owner'] )

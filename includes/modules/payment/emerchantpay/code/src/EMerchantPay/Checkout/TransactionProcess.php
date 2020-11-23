@@ -70,7 +70,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
             $genesis
                 ->request()
                 ->setTransactionId($data->transaction_id)
-                ->setUsage('ZenCart Electronic Transaction')
+                ->setUsage(self::getUsage())
                 ->setDescription($data->description)
                 ->setNotificationUrl($data->urls['notification'])
                 ->setReturnSuccessUrl($data->urls['return_success'])

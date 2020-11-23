@@ -6,7 +6,7 @@ This is a Payment Module for Zen Cart, that gives you the ability to process pay
 Requirements
 ------------
 
-* Zen Cart 1.5.x
+* Zen Cart 1.5.x(Tested up to 1.5.7a)
 * [GenesisPHP v1.18.4](https://github.com/GenesisGateway/genesis_php/releases/tag/1.18.4) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
