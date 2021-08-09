@@ -21,6 +21,7 @@ namespace EMerchantPay\Direct;
 
 use \EMerchantPay\Common as EMerchantPayCommon;
 use \EMerchantPay\Direct\Settings as EMerchantPayDirectSettings;
+use EMerchantPay\Helpers\TransactionsHelper;
 use Genesis\API\Constants\Transaction\Types;
 
 class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
@@ -88,34 +89,40 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         if (isset($genesis)) {
             $genesis
                 ->request()
-                    ->setTransactionId( $data->transaction_id )
-                    ->setRemoteIp(
-                        EMerchantPayCommon::getServerRemoteAddress()
+                ->setTransactionId($data->transaction_id)
+                ->setRemoteIp(
+                    EMerchantPayCommon::getServerRemoteAddress()
+                )
+                ->setUsage(self::getUsage())
+                ->setCurrency($data->currency)
+                ->setAmount($data->order->info['total'])
+                ->setCardHolder($data->card_info['cc_owner'])
+                ->setCardNumber(
+                    TransactionsHelper::sanitizeCreditCardNumber(
+                        $data->card_info['cc_number']
                     )
-                    ->setUsage(self::getUsage())
-                    ->setCurrency( $data->currency )
-                    ->setAmount( $data->order->info['total'] )
-                    ->setCardHolder( $data->card_info['cc_owner'] )
-                    ->setCardNumber( $data->card_info['cc_number'] )
-                    ->setExpirationYear( $data->card_info['cc_expiry_year'] )
-                    ->setExpirationMonth( $data->card_info['cc_expiry_month'] )
-                    ->setCvv( $data->card_info['cc_cvv'] )
-                    ->setCustomerEmail( $data->order->customer['email_address'] )
-                    ->setCustomerPhone( $data->order->customer['telephone'] )
-                    ->setBillingFirstName( $data->order->billing['firstname'] )
-                    ->setBillingLastName( $data->order->billing['lastname'] )
-                    ->setBillingAddress1( $data->order->billing['street_address'] )
-                    ->setBillingZipCode( $data->order->billing['postcode'] )
-                    ->setBillingCity( $data->order->billing['city'] )
-                    ->setBillingState( self::getStateCode($data->order->billing) )
-                    ->setBillingCountry( $data->order->billing['country']['iso_code_2'] )
-                    ->setShippingFirstName( $data->order->delivery['firstname'] )
-                    ->setShippingLastName( $data->order->delivery['lastname'] )
-                    ->setShippingAddress1( $data->order->delivery['street_address'] )
-                    ->setShippingZipCode( $data->order->delivery['postcode'] )
-                    ->setShippingCity( $data->order->delivery['city'] )
-                    ->setShippingState( self::getStateCode($data->order->delivery) )
-                    ->setShippingCountry( $data->order->delivery['country']['iso_code_2'] );
+                )
+                ->setExpirationYear($data->card_info['cc_expiry_year'])
+                ->setExpirationMonth($data->card_info['cc_expiry_month'])
+                ->setCvv($data->card_info['cc_cvv'])
+                ->setCustomerEmail($data->order->customer['email_address'])
+                ->setCustomerPhone($data->order->customer['telephone'])
+                ->setBillingFirstName($data->order->billing['firstname'])
+                ->setBillingLastName($data->order->billing['lastname'])
+                ->setBillingAddress1($data->order->billing['street_address'])
+                ->setBillingZipCode($data->order->billing['postcode'])
+                ->setBillingCity($data->order->billing['city'])
+                ->setBillingState(self::getStateCode($data->order->billing))
+                ->setBillingCountry($data->order->billing['country']['iso_code_2'])
+                ->setShippingFirstName($data->order->delivery['firstname'])
+                ->setShippingLastName($data->order->delivery['lastname'])
+                ->setShippingAddress1($data->order->delivery['street_address'])
+                ->setShippingZipCode($data->order->delivery['postcode'])
+                ->setShippingCity($data->order->delivery['city'])
+                ->setShippingState(self::getStateCode($data->order->delivery))
+                ->setShippingCountry(
+                    $data->order->delivery['country']['iso_code_2']
+                );
 
             if (isset($data->urls)) {
                 $genesis

@@ -148,6 +148,22 @@ class TransactionsHelper
     }
 
     /**
+     * Sanitize the Credit Card Number before Genesis Submission
+     *
+     * @param string $number Credit Card Number
+     *
+     * @return string
+     */
+    public static function sanitizeCreditCardNumber($number)
+    {
+        return str_replace(
+            ' ',
+            '',
+            $number
+        );
+    }
+
+    /**
      * Retrieve the Shipping value from Order Totals
      *
      * @param array $totals Order Totals
