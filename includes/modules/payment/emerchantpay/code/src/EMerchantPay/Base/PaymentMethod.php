@@ -426,7 +426,8 @@ abstract class PaymentMethod extends \base
                     $transaction['reference_id'],
                     array(
                         \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
-                        \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D
+                        \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
+                        \Genesis\API\Constants\Transaction\Types::GOOGLE_PAY
                     ),
                     \Genesis\API\Constants\Transaction\States::APPROVED
                 );

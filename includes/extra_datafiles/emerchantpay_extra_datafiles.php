@@ -32,3 +32,8 @@ define('FILENAME_EMECHANTPAY_DIRECT_IPN', 'emerchantpay_direct_ipn');
 define('EMERCHANTPAY_DIRECT_SETTINGS_PREFIX', 'MODULE_PAYMENT_EMERCHANTPAY_DIRECT_');
 define('TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS', DB_PREFIX . 'emerchantpay_direct_transactions');
 define('PPRO_TRANSACTION_SUFFIX', '_ppro');
+define('GOOGLE_PAY_TRANSACTION_PREFIX', 'google_pay_');
+define('GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE', 'authorize');
+define('GOOGLE_PAY_PAYMENT_TYPE_SALE', 'sale');
+define('METHOD_ACTION_CAPTURE', 'capture');
+define('METHOD_ACTION_REFUND', 'refund');

@@ -22,6 +22,7 @@ namespace EMerchantPay\Checkout;
 use EMerchantPay\Helpers\TransactionsHelper;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Names;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 use Genesis\API\Constants\Transaction\Types;
 
 /**
@@ -55,6 +56,12 @@ class Settings extends \EMerchantPay\Base\Settings
         $transactionTypes = Types::getWPFTransactionTypes();
         $excludedTypes    = TransactionsHelper::getRecurringTransactionTypes();
 
+        // Exclude PPRO transaction. This is not standalone transaction type
+        array_push($excludedTypes, Types::PPRO);
+
+        // Exclude Google Pay transaction. This will serve Google Pay payment methods
+        array_push($excludedTypes, Types::GOOGLE_PAY);
+
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
@@ -66,7 +73,22 @@ class Settings extends \EMerchantPay\Base\Settings
             Methods::getMethods()
         );
 
-        $transactionTypes = array_merge($transactionTypes, $pproTypes);
+        // Add Google Pay types
+        $googlePayTypes = array_map(
+            function ($type) {
+                return GOOGLE_PAY_TRANSACTION_PREFIX . $type;
+            },
+            [
+                GooglePaymentTypes::AUTHORIZE,
+                GooglePaymentTypes::SALE
+            ]
+        );
+
+        $transactionTypes = array_merge(
+            $transactionTypes,
+            $pproTypes,
+            $googlePayTypes
+        );
         asort($transactionTypes);
 
         foreach ($transactionTypes as $type) {

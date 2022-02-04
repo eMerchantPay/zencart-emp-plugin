@@ -19,6 +19,7 @@
 
 namespace EMerchantPay\Base;
 
+use Genesis\API\Constants\Transaction\States as GenesisTransactionState;
 use Genesis\API\Constants\Transaction\Types;
 
 class Transaction
@@ -295,10 +296,19 @@ class Transaction
      */
     public static function getCanCaptureTransaction($transaction)
     {
-        return (Types::canCapture($transaction['type'])
-            && ($transaction['status'] ==
-                \Genesis\API\Constants\Transaction\States::APPROVED)
-        );
+        if (!self::isApprovedStatus($transaction['status'])) {
+            return false;
+        }
+
+        if (self::isTransactionWithCustomAttr($transaction['type'])) {
+            return self::isCustomAttributeBasedTransactionSelected(
+                METHOD_ACTION_CAPTURE,
+                $transaction['type'],
+                \EMerchantPay\Checkout\Settings::getTransactionTypes()
+            );
+        }
+
+        return Types::canCapture($transaction['type']);
     }
 
     /**
@@ -308,10 +318,19 @@ class Transaction
      */
     public static function getCanRefundTransaction($transaction)
     {
-        return (Types::canRefund($transaction['type'])
-                && ($transaction['status'] ==
-                \Genesis\API\Constants\Transaction\States::APPROVED)
-        );
+        if (!self::isApprovedStatus($transaction['status'])) {
+            return false;
+        }
+
+        if (self::isTransactionWithCustomAttr($transaction['type'])) {
+            return self::isCustomAttributeBasedTransactionSelected(
+                METHOD_ACTION_REFUND,
+                $transaction['type'],
+                \EMerchantPay\Checkout\Settings::getTransactionTypes()
+            );
+        }
+
+        return Types::canRefund($transaction['type']);
     }
 
     /**
@@ -323,10 +342,82 @@ class Transaction
      */
     public static function getCanVoidTransaction($transaction)
     {
-        return (Types::canVoid($transaction['type'])
-                && ($transaction['status'] ==
-                \Genesis\API\Constants\Transaction\States::APPROVED)
+        return (Types::canVoid($transaction['type']) &&
+            self::isApprovedStatus($transaction['status']));
+    }
+
+    /**
+     * Check if the specific transaction types by custom attribute exists
+     *
+     * @param string $transactionType Genesis Transaction Type
+     *
+     * @return boolean
+     */
+    public static function isTransactionWithCustomAttr($transactionType)
+    {
+        $transactionTypes = array(
+            Types::GOOGLE_PAY
         );
+
+        return in_array($transactionType, $transactionTypes, true);
+    }
+
+    /**
+     * Check specific transaction based on the selected custom attribute
+     *
+     * @param string $action          Reference Action
+     * @param string $transactionType Genesis Transaction Type
+     * @param array  $selectedTypes   Selected transaction types into the config
+     *
+     * @return boolean
+     */
+    public static function isCustomAttributeBasedTransactionSelected(
+        $action,
+        $transactionType,
+        $selectedTypes
+    ) {
+        switch ($transactionType) {
+        case Types::GOOGLE_PAY:
+            if (METHOD_ACTION_CAPTURE === $action) {
+                return in_array(
+                    GOOGLE_PAY_TRANSACTION_PREFIX .
+                    GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE,
+                    $selectedTypes,
+                    true
+                );
+            }
+
+            if (METHOD_ACTION_REFUND === $action) {
+                return in_array(
+                    GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_SALE,
+                    $selectedTypes,
+                    true
+                );
+            }
+            break;
+        default:
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the given status is APPROVED
+     *
+     * @param string $status Transaction Status
+     *
+     * @return bool
+     */
+    public static function isApprovedStatus($status)
+    {
+        if (empty($status)) {
+            return false;
+        }
+
+        $statusObject = new GenesisTransactionState($status);
+
+        return $statusObject->isApproved();
     }
 
     /**
