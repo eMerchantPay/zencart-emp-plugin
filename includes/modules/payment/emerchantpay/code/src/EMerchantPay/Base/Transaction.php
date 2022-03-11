@@ -356,7 +356,8 @@ class Transaction
     public static function isTransactionWithCustomAttr($transactionType)
     {
         $transactionTypes = array(
-            Types::GOOGLE_PAY
+            Types::GOOGLE_PAY,
+            Types::PAY_PAL,
         );
 
         return in_array($transactionType, $transactionTypes, true);
@@ -392,6 +393,31 @@ class Transaction
                     GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_SALE,
                     $selectedTypes,
                     true
+                );
+            }
+            break;
+        case Types::PAY_PAL:
+            if (METHOD_ACTION_CAPTURE === $action) {
+                return in_array(
+                    PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_AUTHORIZE,
+                    $selectedTypes,
+                    true
+                );
+            }
+
+            if (METHOD_ACTION_REFUND === $action) {
+                $refundableTypes = [
+                    PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_SALE,
+                    PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_EXPRESS,
+                ];
+
+                return (
+                    count(
+                        array_intersect(
+                            $refundableTypes,
+                            $selectedTypes
+                        )
+                    ) > 0
                 );
             }
             break;

@@ -6,14 +6,14 @@ This is a Payment Module for Zen Cart, that gives you the ability to process pay
 Requirements
 ------------
 
-* Zen Cart 1.5.x(Tested up to 1.5.7a)
-* [GenesisPHP v1.19.2](https://github.com/GenesisGateway/genesis_php/releases/tag/1.19.2) - (Integrated in Module)
+* Zen Cart 1.5.x(Tested up to 1.5.7c)
+* [GenesisPHP v1.20.0](https://github.com/GenesisGateway/genesis_php/releases/tag/1.20.0) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements
 ------------
 
-* PHP version 5.3.2 or newer
+* PHP version 5.5.9 or newer
 * PHP Extensions:
     * [BCMath](https://php.net/bcmath)
     * [CURL](https://php.net/curl) (required, only if you use the curl network interface)
@@ -82,7 +82,7 @@ Supported Transactions & Payment Methods
   * __OXXO__
   * __P24__
   * __Pago Facil__
-  * __PayPal Express__
+  * __PayPal__
   * __PaySafeCard__
   * __PayU__
   * __POLi__

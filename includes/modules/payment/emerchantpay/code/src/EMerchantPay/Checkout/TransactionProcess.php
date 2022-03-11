@@ -74,6 +74,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 ->setDescription($data->description)
                 ->setNotificationUrl($data->urls['notification'])
                 ->setReturnSuccessUrl($data->urls['return_success'])
+                ->setReturnPendingUrl($data->urls['return_success'])
                 ->setReturnFailureUrl($data->urls['return_failure'])
                 ->setReturnCancelUrl($data->urls['return_cancel'])
                 ->setCurrency($data->currency)
@@ -227,7 +228,13 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE =>
                     Types::GOOGLE_PAY,
                 GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_SALE      =>
-                    Types::GOOGLE_PAY
+                    Types::GOOGLE_PAY,
+                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_AUTHORIZE         =>
+                    Types::PAY_PAL,
+                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_SALE              =>
+                    Types::PAY_PAL,
+                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_EXPRESS           =>
+                    Types::PAY_PAL,
             ]
         );
 
@@ -237,12 +244,15 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 
                 $processedList[$transactionType]['name'] = $transactionType;
 
-                $key = Types::GOOGLE_PAY === $transactionType ?
-                    'payment_type' : 'payment_method';
+                $key = self::_getCustomParameterKey($transactionType);
 
                 $processedList[$transactionType]['parameters'][] = array(
                     $key => str_replace(
-                        [$pproSuffix, GOOGLE_PAY_TRANSACTION_PREFIX],
+                        [
+                            $pproSuffix,
+                            GOOGLE_PAY_TRANSACTION_PREFIX,
+                            PAYPAL_TRANSACTION_PREFIX,
+                        ],
                         '',
                         $selectedType
                     )
@@ -512,5 +522,31 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         }
 
         \Genesis\Config::setToken(trim($token));
+    }
+
+    /**
+     * Returns payment method/type based on transaction type
+     *
+     * @param string $transactionType Transaction type
+     *
+     * @return string
+     */
+    private static function _getCustomParameterKey($transactionType)
+    {
+        switch ($transactionType) {
+        case Types::PPRO:
+            $result = 'payment_method';
+            break;
+        case Types::PAY_PAL:
+            $result = 'payment_type';
+            break;
+        case Types::GOOGLE_PAY:
+            $result = 'payment_subtype';
+            break;
+        default:
+            $result = 'unknown';
+        }
+
+        return $result;
     }
 }

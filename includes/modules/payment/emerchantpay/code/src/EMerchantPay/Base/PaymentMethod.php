@@ -427,7 +427,8 @@ abstract class PaymentMethod extends \base
                     array(
                         \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
                         \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
-                        \Genesis\API\Constants\Transaction\Types::GOOGLE_PAY
+                        \Genesis\API\Constants\Transaction\Types::GOOGLE_PAY,
+                        \Genesis\API\Constants\Transaction\Types::PAY_PAL,
                     ),
                     \Genesis\API\Constants\Transaction\States::APPROVED
                 );

@@ -23,6 +23,7 @@ use EMerchantPay\Helpers\TransactionsHelper;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Names;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 use Genesis\API\Constants\Transaction\Types;
 
 /**
@@ -62,6 +63,9 @@ class Settings extends \EMerchantPay\Base\Settings
         // Exclude Google Pay transaction. This will serve Google Pay payment methods
         array_push($excludedTypes, Types::GOOGLE_PAY);
 
+        // Exclude PayPal transaction. This will serve PayPal payment methods
+        array_push($excludedTypes, Types::PAY_PAL);
+
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
@@ -84,10 +88,23 @@ class Settings extends \EMerchantPay\Base\Settings
             ]
         );
 
+        // Add PayPal types
+        $payPalTypes = array_map(
+            function ($type) {
+                return PAYPAL_TRANSACTION_PREFIX . $type;
+            },
+            [
+                PayPalPaymentTypes::AUTHORIZE,
+                PayPalPaymentTypes::SALE,
+                PayPalPaymentTypes::EXPRESS,
+            ]
+        );
+
         $transactionTypes = array_merge(
             $transactionTypes,
             $pproTypes,
-            $googlePayTypes
+            $googlePayTypes,
+            $payPalTypes
         );
         asort($transactionTypes);
 

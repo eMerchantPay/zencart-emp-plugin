@@ -41,7 +41,7 @@ class emerchantpay_direct extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_DIRECT_CODE;
-        $this->version = "1.1.6";
+        $this->version = "1.1.7";
         parent::__construct();
     }
 
