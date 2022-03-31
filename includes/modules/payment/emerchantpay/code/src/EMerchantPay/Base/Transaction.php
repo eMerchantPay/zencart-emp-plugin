@@ -358,6 +358,7 @@ class Transaction
         $transactionTypes = array(
             Types::GOOGLE_PAY,
             Types::PAY_PAL,
+            Types::APPLE_PAY,
         );
 
         return in_array($transactionType, $transactionTypes, true);
@@ -418,6 +419,23 @@ class Transaction
                             $selectedTypes
                         )
                     ) > 0
+                );
+            }
+            break;
+        case Types::APPLE_PAY:
+            if (METHOD_ACTION_CAPTURE === $action) {
+                return in_array(
+                    APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_AUTHORIZE,
+                    $selectedTypes,
+                    true
+                );
+            }
+
+            if (METHOD_ACTION_REFUND === $action) {
+                return in_array(
+                    APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_SALE,
+                    $selectedTypes,
+                    true
                 );
             }
             break;

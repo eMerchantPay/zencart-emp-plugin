@@ -235,6 +235,10 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                     Types::PAY_PAL,
                 PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_EXPRESS           =>
                     Types::PAY_PAL,
+                APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_AUTHORIZE   =>
+                    Types::APPLE_PAY,
+                APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_SALE        =>
+                    Types::APPLE_PAY,
             ]
         );
 
@@ -252,6 +256,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                             $pproSuffix,
                             GOOGLE_PAY_TRANSACTION_PREFIX,
                             PAYPAL_TRANSACTION_PREFIX,
+                            APPLE_PAY_TRANSACTION_PREFIX
                         ],
                         '',
                         $selectedType
@@ -541,6 +546,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
             $result = 'payment_type';
             break;
         case Types::GOOGLE_PAY:
+        case Types::APPLE_PAY:
             $result = 'payment_subtype';
             break;
         default:

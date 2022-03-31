@@ -22,6 +22,7 @@ namespace EMerchantPay\Checkout;
 use EMerchantPay\Helpers\TransactionsHelper;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Names;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 use Genesis\API\Constants\Transaction\Types;
@@ -66,6 +67,9 @@ class Settings extends \EMerchantPay\Base\Settings
         // Exclude PayPal transaction. This will serve PayPal payment methods
         array_push($excludedTypes, Types::PAY_PAL);
 
+        // Exclude Apple Pay transaction
+        array_push($excludedTypes, Types::APPLE_PAY);
+
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
@@ -100,11 +104,23 @@ class Settings extends \EMerchantPay\Base\Settings
             ]
         );
 
+        // Add Apple Pay types
+        $applePayTypes = array_map(
+            function ($type) {
+                return APPLE_PAY_TRANSACTION_PREFIX . $type;
+            },
+            [
+                ApplePaymentTypes::AUTHORIZE,
+                ApplePaymentTypes::SALE
+            ]
+        );
+
         $transactionTypes = array_merge(
             $transactionTypes,
             $pproTypes,
             $googlePayTypes,
-            $payPalTypes
+            $payPalTypes,
+            $applePayTypes
         );
         asort($transactionTypes);
 

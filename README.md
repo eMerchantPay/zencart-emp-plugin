@@ -6,8 +6,8 @@ This is a Payment Module for Zen Cart, that gives you the ability to process pay
 Requirements
 ------------
 
-* Zen Cart 1.5.x(Tested up to 1.5.7c)
-* [GenesisPHP v1.20.0](https://github.com/GenesisGateway/genesis_php/releases/tag/1.20.0) - (Integrated in Module)
+* Zen Cart 1.5.x(Tested up to 1.5.7d)
+* [GenesisPHP v1.20.1](https://github.com/GenesisGateway/genesis_php/releases/tag/1.20.1) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements
@@ -40,6 +40,7 @@ Supported Transactions & Payment Methods
   * __Sale (3D-Secure)__
 
 * ```emerchantpay Checkout``` Payment Method
+  * __Apple Pay__
   * __Argencard__
   * __Aura__
   * __Authorize__
@@ -62,7 +63,7 @@ Supported Transactions & Payment Methods
   * __eZeeWallet__
   * __Fashioncheque__
   * __GiroPay__
-  * __GooglePay__
+  * __Google Pay__
   * __iDeal__
   * __iDebit__
   * __InstaDebit__

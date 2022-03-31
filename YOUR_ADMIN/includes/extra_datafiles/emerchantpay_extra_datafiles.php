@@ -51,5 +51,8 @@ define('PAYPAL_TRANSACTION_PREFIX', 'pay_pal_');
 define('PAYPAL_PAYMENT_TYPE_AUTHORIZE', 'authorize');
 define('PAYPAL_PAYMENT_TYPE_SALE', 'sale');
 define('PAYPAL_PAYMENT_TYPE_EXPRESS', 'express');
+define('APPLE_PAY_TRANSACTION_PREFIX', 'apple_pay_');
+define('APPLE_PAY_PAYMENT_TYPE_AUTHORIZE', 'authorize');
+define('APPLE_PAY_PAYMENT_TYPE_SALE', 'sale');
 define('METHOD_ACTION_CAPTURE', 'capture');
 define('METHOD_ACTION_REFUND', 'refund');
