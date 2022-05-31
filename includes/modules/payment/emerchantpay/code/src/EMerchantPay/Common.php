@@ -158,8 +158,9 @@ class Common
     }
 
     /**
-     * Builds a transaction array for the Installer
-     * @param array $transaction_types
+     * Builds an array for the Installer
+     *
+     * @param array $options Input array to be converted
      * @return string
      */
     public static function buildSettingsDropDownOptions($options)

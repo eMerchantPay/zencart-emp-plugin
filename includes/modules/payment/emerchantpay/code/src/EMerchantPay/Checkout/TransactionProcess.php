@@ -197,6 +197,22 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 'user_id' => $trustlyUserId
             );
             break;
+        case Types::ONLINE_BANKING_PAYIN:
+            $selectedBankCodes = array_filter(
+                Settings::getSelectedBankCodes(),
+                function ($value) {
+                    return $value != 'none';
+                }
+            );
+            if (\Genesis\Utils\Common::isValidArray($selectedBankCodes)) {
+                $parameters['bank_codes'] = array_map(
+                    function ($value) {
+                        return ['bank_code' => $value];
+                    },
+                    $selectedBankCodes
+                );
+            }
+            break;
         }
 
         return $parameters;

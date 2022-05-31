@@ -20,6 +20,7 @@
 namespace EMerchantPay\Checkout;
 
 use EMerchantPay\Helpers\TransactionsHelper;
+use Genesis\API\Constants\Banks;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Names;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
@@ -162,6 +163,11 @@ class Settings extends \EMerchantPay\Base\Settings
         $keys = parent::getSettingKeys();
 
         static::appendSettingKey($keys, 'ENVIRONMENT', 'TRANSACTION_TYPES');
+        static::appendSettingKey(
+            $keys,
+            'TRANSACTION_TYPES',
+            'BANK_CODES'
+        );
         $keys[] = static::getPrefix() . 'LANGUAGE';
         $keys[] = static::getPrefix() . 'WPF_TOKENIZATION';
 
@@ -185,6 +191,25 @@ class Settings extends \EMerchantPay\Base\Settings
     }
 
     /**
+     * Get Selected Payment methods for Online banking
+     *
+     * @return array
+     */
+    public static function getSelectedBankCodes()
+    {
+        $bankCodes = static::getSetting("BANK_CODES");
+
+        return
+            array_map(
+                'trim',
+                explode(
+                    ',',
+                    $bankCodes
+                )
+            );
+    }
+
+    /**
      * Get Checkout Language for the Genesis WPF
      * @param string $default
      * @return string
@@ -192,5 +217,17 @@ class Settings extends \EMerchantPay\Base\Settings
     public static function getLanguage($default = 'en')
     {
         return (static::getSetting("LANGUAGE") ?: $default);
+    }
+
+    /**
+     * List of all available Payment method for Online banking
+     *
+     * @return array
+     */
+    public static function getAvailableBankCodes()
+    {
+        return [
+            Banks::CPI => 'Interac Combined Pay-in'
+        ];
     }
 }

@@ -203,6 +203,14 @@ class Installer extends \EMerchantPay\Base\Installer
                 EmpCheckoutSettings::getTransactionsList()
             );
 
+        $placeholder = ['none' => 'No specific Bank in use'];
+        $availableBankCodes
+            = $placeholder + EmpCheckoutSettings::getAvailableBankCodes();
+        $bank_codes
+            = EMerchantPayCommon::buildSettingsDropDownOptions(
+                $availableBankCodes
+            );
+
         $db->Execute(
             'insert into ' . TABLE_CONFIGURATION . "
             (configuration_title, configuration_key, configuration_value,
@@ -214,9 +222,24 @@ class Installer extends \EMerchantPay\Base\Installer
                 'TRANSACTION_TYPES'
             ) . "',
             '" . \Genesis\API\Constants\Transaction\Types::SALE . "',
-            'What transaction type should we use upon purchase?.', '6', '0',
+            'What transaction type should we use upon purchase?', '6', '0',
             'emp_zfg_select_drop_down_multiple({$requiredOptionsAttributes}, " .
             "{$transaction_types}, ', now())"
+        );
+        $db->Execute(
+            'insert into ' . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value,
+            configuration_description, configuration_group_id, sort_order,
+            set_function, date_added)
+            values
+            ('Bank codes for Online banking',
+            '" . EmpCheckoutSettings::getCompleteSettingKey(
+                'BANK_CODES'
+            ) . "',
+            'none',
+            'Select Bank code(s) for Online banking transaction.', '6', '0',
+            'emp_zfg_select_drop_down_multiple({$requiredOptionsAttributes}, " .
+            "{$bank_codes}, ', now())"
         );
         $db->Execute(
             'insert into ' . TABLE_CONFIGURATION . "
