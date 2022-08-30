@@ -134,23 +134,23 @@ abstract class TemplateManager
         ?>
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                attachCardToWrapper()
+                attachCardToWrapperEmp()
 
                 jQuery('<?php echo $data['formSelectors']['expiryInput'];?>').keyup(function() {
-                    var ccExpiresMonthYear = jQuery(this).val().split(' / ');
+                    var ccExpiresMonthYearEmp = jQuery(this).val().split(' / ');
 
-                    if (ccExpiresMonthYear.length == 2) {
-                        jQuery('#<?php echo $data['hidden']['expiryMonth'];?>').val(ccExpiresMonthYear[0]);
-                        jQuery('#<?php echo $data['hidden']['expiryYear'];?>').val(ccExpiresMonthYear[1]);
+                    if (ccExpiresMonthYearEmp.length == 2) {
+                        jQuery('#<?php echo $data['hidden']['expiryMonth'];?>').val(ccExpiresMonthYearEmp[0]);
+                        jQuery('#<?php echo $data['hidden']['expiryYear'];?>').val(ccExpiresMonthYearEmp[1]);
                     }
                 });
 
             });
 
-            function attachCardToWrapper() {
-                var cardWrapper = jQuery('<?php echo $data['container'];?>');
+            function attachCardToWrapperEmp() {
+                var cardWrapperEmp = jQuery('<?php echo $data['container'];?>');
 
-                if (cardWrapper.length) {
+                if (cardWrapperEmp.length) {
                     new Card({
                         form: '<?php echo $data['form'];?>',
                         container: '<?php echo $data['container'];?>',
