@@ -21,6 +21,7 @@ namespace EMerchantPay\Checkout;
 
 use \EMerchantPay\Checkout\Settings as EMerchantPayCheckoutSettings;
 use \EMerchantPay\Checkout\Transaction as EMerchantPayCheckoutTransaction;
+use EMerchantPay\Helpers\ThreedsHelper;
 use EMerchantPay\Helpers\TransactionsHelper;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes;
@@ -29,6 +30,7 @@ use Genesis\API\Constants\Transaction\Types;
 
 class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 {
+    const ORDER_CONTENT_TYPE_VIRTUAL = 'virtual';
 
     /**
      * Set Genesis Config Values (Ex. Login, Password, Token, etc)
@@ -67,8 +69,13 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         try {
             $genesis = new \Genesis\Genesis('WPF\Create');
 
-            $genesis
-                ->request()
+            /**
+             * Autocomplete helper comment
+             *
+             * @var \Genesis\API\Request\WPF\Create $request
+             */
+            $request = $genesis->request();
+            $request
                 ->setTransactionId($data->transaction_id)
                 ->setUsage(self::getUsage())
                 ->setDescription($data->description)
@@ -100,6 +107,17 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
             static::_addTransactionTypesToGatewayRequest($genesis, $data->order);
 
             static::setTokenizationData($genesis->request());
+
+            if (EMerchantPayCheckoutSettings::isThreedsAlowed()) {
+                static::_addThreedsData($genesis, $data);
+            }
+
+            $wpfAmount = (float)$request->getAmount();
+            if ($wpfAmount <= Settings::getScaExemptionAmount()) {
+                $request->setScaExemption(
+                    Settings::getScaExemption()
+                );
+            }
 
             $genesis->execute();
 
@@ -570,5 +588,106 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         }
 
         return $result;
+    }
+
+    /**
+     * Add optional 3DSv2 parameters
+     *
+     * @param object $genesis Genesis request object
+     * @param object $data    Order data object
+     *
+     * @return void
+     *
+     * @throws \Genesis\Exceptions\InvalidArgument
+     */
+    private static function _addThreedsData($genesis, $data)
+    {
+        global $db;
+
+        $order         = $data->order;
+        $customerId    = self::getCustomerId();
+        $isVirtualCart = $order->content_type == self::ORDER_CONTENT_TYPE_VIRTUAL;
+
+        $customerInfo     = ThreedsHelper::getCustomerInfo($customerId, $db);
+        $customerOrders   = ThreedsHelper::getCustomerOrders($customerId, $db);
+        $ordersForPeriod  = ThreedsHelper::findNumberOfOrdersForPeriod(
+            $customerOrders
+        );
+
+        /**
+         * Autocomplete helper comment
+         *
+         * @var \Genesis\API\Request\WPF\Create $request
+         */
+        $request = $genesis->request();
+
+        $request
+            ->setThreedsV2ControlChallengeIndicator(
+                EMerchantPayCheckoutSettings::getChallengeIndicator()
+            )
+            ->setThreedsV2PurchaseCategory(
+                ThreedsHelper::getThreedsPurchaseCategory($isVirtualCart)
+            )
+            ->setThreedsV2MerchantRiskDeliveryTimeframe(
+                ThreedsHelper::getThreedsDeliveryTimeframe($isVirtualCart)
+            )
+            ->setThreedsV2MerchantRiskShippingIndicator(
+                ThreedsHelper::getShippingIndicator($data, $isVirtualCart)
+            )
+            ->setThreedsV2MerchantRiskReorderItemsIndicator(
+                ThreedsHelper::getReorderItemsIndicator(
+                    $customerId, $data->order->products, $db
+                )
+            )
+            ->setThreedsV2CardHolderAccountCreationDate(
+                $customerInfo['date_account_created']
+            )
+            ->setThreedsV2CardHolderAccountPasswordChangeDate(
+                $customerInfo['date_account_last_modified']
+            )
+            ->setThreedsV2CardHolderAccountPasswordChangeIndicator(
+                ThreedsHelper::getPasswordChangeIndicator(
+                    $customerInfo['date_account_last_modified']
+                )
+            )
+            ->setThreedsV2CardHolderAccountLastChangeDate(
+                $customerInfo['date_account_last_modified']
+            )
+            ->setThreedsV2CardHolderAccountUpdateIndicator(
+                ThreedsHelper::getUpdateIndicator($customerInfo)
+            )
+            ->setThreedsV2CardHolderAccountRegistrationDate(
+                ThreedsHelper::findFirstCustomerOrderDate($customerOrders)
+            )
+            ->setThreedsV2CardHolderAccountRegistrationIndicator(
+                ThreedsHelper::getRegistrationIndicator($customerOrders)
+            )
+            ->setThreedsV2CardHolderAccountTransactionsActivityLast24Hours(
+                $ordersForPeriod['last_24h']
+            )
+            ->setThreedsV2CardHolderAccountTransactionsActivityPreviousYear(
+                $ordersForPeriod['last_year']
+            )
+            ->setThreedsV2CardHolderAccountPurchasesCountLast6Months(
+                $ordersForPeriod['last_6m']
+            );
+
+        if (!$isVirtualCart) {
+            $shippingAddressDateFirstUsed
+                = ThreedsHelper::findShippingAddressDateFirstUsed(
+                    $data->order->delivery,
+                    $customerOrders
+                );
+
+            $request
+                ->setThreedsV2CardHolderAccountShippingAddressDateFirstUsed(
+                    $shippingAddressDateFirstUsed
+                )
+                ->setThreedsV2CardHolderAccountShippingAddressUsageIndicator(
+                    ThreedsHelper::getShippingAddressUsageIndicator(
+                        $shippingAddressDateFirstUsed
+                    )
+                );
+        }
     }
 }

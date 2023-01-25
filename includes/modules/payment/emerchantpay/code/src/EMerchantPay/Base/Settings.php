@@ -306,4 +306,24 @@ abstract class Settings
     {
         return static::getBoolSetting('WPF_TOKENIZATION');
     }
+
+    /**
+     * Get 3DSv2 optional parameters allowed settings value
+     *
+     * @return bool
+     */
+    public static function isThreedsAlowed()
+    {
+        return static::getBoolSetting("THREEDS_ALLOWED");
+    }
+
+    /**
+     * Get 3DSv2 challenge indicator
+     *
+     * @return string
+     */
+    public static function getChallengeIndicator()
+    {
+         return static::getSetting('THREEDS_CHALLENGE_INDICATOR');
+    }
 }

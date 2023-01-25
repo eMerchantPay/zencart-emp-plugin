@@ -22,7 +22,7 @@ if (!defined('IS_ADMIN_FLAG')) {
 }
 
 define('EMERCHANTPAY_CHECKOUT_CODE', 'emerchantpay_checkout');
-define('FILENAME_EMECHANTPAY_CHECKOUT_IPN', 'emerchantpay_checkout_ipn');
+define('FILENAME_EMERCHANTPAY_CHECKOUT_IPN', 'emerchantpay_checkout_ipn');
 define(
     'EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX',
     'MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_'
@@ -36,13 +36,6 @@ define(
     DB_PREFIX . 'emerchantpay_checkout_consumers'
 );
 
-define('EMERCHANTPAY_DIRECT_CODE', 'emerchantpay_direct');
-define('FILENAME_EMECHANTPAY_DIRECT_IPN', 'emerchantpay_direct_ipn');
-define('EMERCHANTPAY_DIRECT_SETTINGS_PREFIX', 'MODULE_PAYMENT_EMERCHANTPAY_DIRECT_');
-define(
-    'TABLE_EMERCHANTPAY_DIRECT_TRANSACTIONS',
-    DB_PREFIX . 'emerchantpay_direct_transactions'
-);
 define('PPRO_TRANSACTION_SUFFIX', '_ppro');
 define('GOOGLE_PAY_TRANSACTION_PREFIX', 'google_pay_');
 define('GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE', 'authorize');

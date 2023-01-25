@@ -205,7 +205,7 @@ class Notification extends \EMerchantPay\Base\Notification
     {
         return html_entity_decode(
             zen_href_link(
-                FILENAME_EMECHANTPAY_CHECKOUT_IPN,
+                FILENAME_EMERCHANTPAY_CHECKOUT_IPN,
                 "return=$action",
                 "SSL",
                 false

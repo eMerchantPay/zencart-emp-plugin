@@ -410,7 +410,15 @@ final class Common
      */
     public static function isRegexExpr($pattern)
     {
-        return @preg_match($pattern, null) !== false;
+        set_error_handler(
+            function () {
+            },
+            E_WARNING
+        );
+        $isRegularExpression = preg_match($pattern, '') !== false;
+        restore_error_handler();
+
+        return $isRegularExpression;
     }
 
     /**
@@ -455,7 +463,10 @@ final class Common
      *
      * @param array $arrayKeys
      * @param \ArrayObject $arrayObject
+     *
      * @return \ArrayObject
+     *
+     * @throws Exception
      */
     public static function removeMultipleKeys($arrayKeys, $arrayObject)
     {
@@ -464,7 +475,7 @@ final class Common
         }
 
         foreach ($arrayKeys as $key) {
-            if (array_key_exists($key, $arrayObject)) {
+            if (property_exists($arrayObject, $key)) {
                 unset($arrayObject->{$key});
             }
         }

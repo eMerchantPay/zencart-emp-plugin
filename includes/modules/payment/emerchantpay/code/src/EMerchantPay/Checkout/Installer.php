@@ -21,6 +21,7 @@ namespace EMerchantPay\Checkout;
 
 use \EMerchantPay\Checkout\Settings as EmpCheckoutSettings;
 use \EMerchantPay\Common            as EMerchantPayCommon;
+use Genesis\API\Constants\Transaction\Parameters\ScaExemptions;
 
 class Installer extends \EMerchantPay\Base\Installer
 {
@@ -91,6 +92,8 @@ class Installer extends \EMerchantPay\Base\Installer
         static::_addTransactionsConfigurationEntries();
         static::_addWpfConfigurationEntries();
         static::_addOrderConfigurationEntries();
+        static::_addThreedsOptions();
+        static::_addScaExemptionOptions();
     }
 
     /**
@@ -413,6 +416,96 @@ class Installer extends \EMerchantPay\Base\Installer
             '1', 'Set the status of canceled orders made with this payment module',
             '6', '0', 'emp_zfg_pull_down_order_statuses(',
             'zen_get_order_status_name', now())"
+        );
+    }
+
+    /**
+     * Insert 3DSv2 options into DB
+     *
+     * @return void
+     */
+    private static function _addThreedsOptions()
+    {
+        global $db;
+
+        $challengeIndicators = EMerchantPayCommon::buildSettingsDropDownOptions(
+            EmpCheckoutSettings::getChallengeIndicators()
+        );
+
+        $db->Execute(
+            'insert into ' . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value,
+            configuration_description, configuration_group_id, sort_order,
+            set_function, use_function, date_added)
+            values
+            ('Enable 3DSv2',
+            '" . EmpCheckoutSettings::getCompleteSettingKey(
+                'THREEDS_ALLOWED'
+            ) . "',
+            'true', 'Enable 3DSv2 optional parameters.',
+             '6', '4', 'emp_zfg_draw_toggle(',
+            'emp_zfg_get_toggle_value', now())"
+        );
+        $db->Execute(
+            'insert into ' . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value,
+            configuration_description, configuration_group_id, sort_order,
+            set_function, date_added)
+            values
+            ('3DSv2 Challenge',
+            '" . EmpCheckoutSettings::getCompleteSettingKey(
+                'THREEDS_CHALLENGE_INDICATOR'
+            ) . "', 'no_preference', 
+            'The value has weight and might impact the decision whether a 
+            challenge will be required for the transaction or not.',
+             '6', '4', 'emp_zfg_select_drop_down_single({$challengeIndicators},',
+              now())"
+        );
+    }
+
+    /**
+     * Insert SCA excemption options into DB
+     *
+     * @return void
+     */
+    private static function _addScaExemptionOptions()
+    {
+        global $db;
+
+        $scaExemptionOptions = EMerchantPayCommon::buildSettingsDropDownOptions(
+            [
+                ScaExemptions::EXEMPTION_LOW_RISK  => 'Low risk',
+                ScaExemptions::EXEMPTION_LOW_VALUE => 'Low value',
+            ]
+        );
+
+        $db->Execute(
+            'insert into ' . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value,
+            configuration_description, configuration_group_id, sort_order,
+            set_function, date_added)
+            values
+            ('SCA Exemption',
+            '" . EmpCheckoutSettings::getCompleteSettingKey(
+                'SCA_EXEMPTION'
+            ) . "', '" . ScaExemptions::EXEMPTION_LOW_RISK . "', 
+            'Exemption for the Strong Customer Authentication.',
+             '6', '5', 'emp_zfg_select_drop_down_single({$scaExemptionOptions},',
+              now())"
+        );
+        $db->Execute(
+            'insert into ' . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value,
+            configuration_description, configuration_group_id, sort_order,
+            set_function, date_added)
+            values
+            ('Exemption Amount',
+            '" . EmpCheckoutSettings::getCompleteSettingKey(
+                'SCA_EXEMPTION_AMOUNT'
+            ) . "',
+            '100', 'Exemption Amount determinate if the SCA Exemption should
+             be included in the request to the Gateway.',
+            '6', '6', 'emp_zfg_draw_input(null, ', now())"
         );
     }
 
