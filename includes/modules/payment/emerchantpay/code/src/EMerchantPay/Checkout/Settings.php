@@ -232,7 +232,8 @@ class Settings extends \EMerchantPay\Base\Settings
     public static function getAvailableBankCodes()
     {
         return [
-            Banks::CPI => 'Interac Combined Pay-in'
+            Banks::CPI => 'Interac Combined Pay-in',
+            Banks::BCT => 'Bancontact',
         ];
     }
 
