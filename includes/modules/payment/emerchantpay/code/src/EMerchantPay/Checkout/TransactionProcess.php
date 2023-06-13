@@ -249,6 +249,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         $aliasMap      = array();
 
         $selectedTypes = EMerchantPayCheckoutSettings::getTransactionTypes();
+
         $pproSuffix    = PPRO_TRANSACTION_SUFFIX;
         $methods       = Methods::getMethods();
 

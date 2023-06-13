@@ -185,14 +185,17 @@ class Settings extends \EMerchantPay\Base\Settings
     public static function getTransactionTypes()
     {
         $transaction_types = static::getSetting("TRANSACTION_TYPES");
-        return
+
+        // Trim selected values for payment types and reorder them
+        return static::_orderCardTransactionTypes(
             array_map(
                 'trim',
                 explode(
                     ',',
                     $transaction_types
                 )
-            );
+            )
+        );
     }
 
     /**
@@ -270,5 +273,26 @@ class Settings extends \EMerchantPay\Base\Settings
     public static function getScaExemptionAmount()
     {
         return max((float)static::getSetting('SCA_EXEMPTION_AMOUNT'), 0);
+    }
+
+    /**
+     * Order transaction types with Card Transaction types in front
+     *
+     * @param array $selected_types Selected transaction types
+     *
+     * @return array
+     */
+    private static function _orderCardTransactionTypes($selected_types)
+    {
+        $order = \Genesis\API\Constants\Transaction\Types::getCardTransactionTypes();
+
+        asort($selected_types);
+
+        $sorted_array = array_intersect($order, $selected_types);
+
+        return array_merge(
+            $sorted_array,
+            array_diff($selected_types, $sorted_array)
+        );
     }
 }

@@ -27,6 +27,12 @@ use \EMerchantPay\Checkout\Notification       as EMerchantPayCheckoutNotificatio
 
 class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
 {
+    /**
+     * Check if the module is installed
+     *
+     * @var bool
+     */
+    protected $_check;
 
     /**
      * Generate Reference Transaction (Capture, Refund, Void)
@@ -302,7 +308,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.2.1";
+        $this->version = "1.2.2";
         parent::__construct();
     }
 
