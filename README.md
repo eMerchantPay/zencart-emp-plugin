@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * Zen Cart 1.5.x(Tested up to 1.5.8)
-* [GenesisPHP v1.21.9](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.9) - (Integrated in Module)
+* [GenesisPHP v1.21.11](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.11) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
