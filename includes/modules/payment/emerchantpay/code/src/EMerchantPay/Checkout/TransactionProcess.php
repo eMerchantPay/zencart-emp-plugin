@@ -231,6 +231,15 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 );
             }
             break;
+        case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
+            $userId = static::getCustomerId();
+            $customerId = empty($userId) ?
+                static::getCurrentUserIdHash() : $userId;
+
+            $parameters = array(
+                'customer_id' => $customerId
+            );
+            break;
         }
 
         return $parameters;
