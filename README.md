@@ -1,13 +1,15 @@
 emerchantpay Gateway Module for Zen Cart
 ======================================
 
+[![Software License](https://img.shields.io/badge/license-GPL-green.svg?style=flat)](LICENSE)
+
 This is a Payment Module for Zen Cart, that gives you the ability to process payments through emerchantpay's Payment Gateway - Genesis.
 
 Requirements
 ------------
 
-* Zen Cart 1.5.x(Tested up to 1.5.8)
-* [GenesisPHP v1.24.0](https://github.com/GenesisGateway/genesis_php/releases/tag/1.24.0) - (Integrated in Module)
+* Zen Cart 1.5.x(Tested up to 2.0.1)
+* [GenesisPHP v2.0.0](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.0) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -60,7 +62,6 @@ Supported Transactions & Payment Methods
   * __iDeal__
   * __iDebit__
   * __InstaDebit__
-  * __InstantTransfer__
   * __InitRecurringSale__
   * __InitRecurringSale (3D-Secure)__
   * __Intersolve__
@@ -115,5 +116,20 @@ Supported Transactions & Payment Methods
 _Note_: If you have trouble with your credentials or terminal configuration, get in touch with our [support] team
 
 You're now ready to process payments through our gateway.
+
+Development
+------------
+* Install dev packages
+```shell
+composer install
+```
+* Run PHP Code Sniffer
+```shell
+composer php-cs
+```
+* Run PHP Mess Detector
+```shell
+composer php-md
+```
 
 [support]: mailto:tech-support@emerchantpay.net

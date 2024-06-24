@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2018 emerchantpay Ltd.
  *
@@ -20,11 +21,11 @@
 namespace EMerchantPay\Base;
 
 use EMerchantPay\Helpers\TransactionsHelper;
-use Genesis\API\Constants\Transaction\Types;
+use Genesis\Api\Constants\Transaction\Types;
+use Genesis\Api\Response;
 
 class TransactionProcess
 {
-
     const TRANSACTION_USAGE = 'Payment via';
 
     /**
@@ -33,7 +34,7 @@ class TransactionProcess
     protected static function doLoadGenesisPrivateConfigValues()
     {
         \Genesis\Config::setEndpoint(
-            \Genesis\API\Constants\Endpoints::EMERCHANTPAY
+            \Genesis\Api\Constants\Endpoints::EMERCHANTPAY
         );
     }
 
@@ -72,9 +73,9 @@ class TransactionProcess
      * Send transaction to Genesis
      *
      * @param $data array Transaction Data
-     * @return \stdClass
+     * @return Response
      * @throws \Exception
-     * @throws \Genesis\Exceptions\ErrorAPI
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public static function pay($data)
     {
@@ -92,7 +93,7 @@ class TransactionProcess
      * @return \stdClass
      * @throws \Exception
      */
-    private static function _executeReferenceTransaction($transaction_class, $data)
+    private static function executeReferenceTransaction($transaction_class, $data)
     {
         global $order;
 
@@ -126,7 +127,8 @@ class TransactionProcess
             );
             $klarnaRefund  = Types::getRefundTransactionClass(Types::KLARNA_CAPTURE);
 
-            if ($transaction_class === $klarnaCapture
+            if (
+                $transaction_class === $klarnaCapture
                 || $transaction_class === $klarnaRefund
             ) {
                 $items = TransactionsHelper::getKlarnaCustomParamItems($order);
@@ -154,7 +156,7 @@ class TransactionProcess
      */
     public static function capture($data)
     {
-        return static::_executeReferenceTransaction(
+        return static::executeReferenceTransaction(
             Types::getCaptureTransactionClass($data->type),
             $data
         );
@@ -170,7 +172,7 @@ class TransactionProcess
      */
     public static function refund($data)
     {
-        return static::_executeReferenceTransaction(
+        return static::executeReferenceTransaction(
             Types::getRefundTransactionClass($data->type),
             $data
         );
@@ -186,7 +188,7 @@ class TransactionProcess
      */
     public static function void($data)
     {
-        return self::_executeReferenceTransaction(
+        return self::executeReferenceTransaction(
             Types::getFinancialRequestClassForTrxType(Types::VOID),
             $data
         );
@@ -195,6 +197,7 @@ class TransactionProcess
     /**
      * Set Genesis Terminal Token
      * @param string $reference_id
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public static function setTerminalToken($reference_id)
     {
@@ -214,7 +217,7 @@ class TransactionProcess
 
         if (true && isset($address['country_id']) && zen_not_null($address['country_id'])) {
             if (isset($address['zone_id']) && zen_not_null($address['zone_id'])) {
-            $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
+                $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
             }
         }
 

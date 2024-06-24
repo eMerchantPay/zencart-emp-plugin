@@ -1,0 +1,35 @@
+{
+    "name": "emerchantpay/zencart-emerchantpay-plugin",
+    "description": "emerchantpay Gateway Module for Zen Cart",
+    "version": "1.2.6",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "emerchantpay",
+            "email": "shopping_carts@emerchantpay.com",
+            "homepage":"https://emerchantpay.com"
+        }
+    ],
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.10",
+        "phpmd/phpmd": "^2.15"
+    },
+    "scripts": {
+        "php-cs": [
+            "vendor/bin/phpcs . --report=summary --standard=.phpcs.xml"
+        ],
+        "php-md": [
+            "vendor/bin/phpmd . ansi ./.phpmd.xml --not-strict"
+        ],
+        "php-cs-jenkins": [
+            "vendor/bin/phpcs . --standard=.phpcs.xml --report=checkstyle --report-file=phpcs_report.xml"
+        ],
+        "php-md-jenkins": [
+            "vendor/bin/phpmd . xml ./.phpmd.xml --reportfile phpmd_report.xml"
+        ],
+        "styles": [
+            "@php-cs",
+            "@php-md"
+        ]
+    }
+}

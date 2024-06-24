@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2018 emerchantpay Ltd.
  *
@@ -20,14 +21,14 @@
 namespace EMerchantPay\Checkout;
 
 use EMerchantPay\Helpers\TransactionsHelper;
-use Genesis\API\Constants\Banks;
-use Genesis\API\Constants\Payment\Methods;
-use Genesis\API\Constants\Transaction\Names;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
-use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
-use Genesis\API\Constants\Transaction\Types;
+use Genesis\Api\Constants\Banks;
+use Genesis\Api\Constants\Payment\Methods;
+use Genesis\Api\Constants\Transaction\Names;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
+use Genesis\Api\Constants\Transaction\Types;
 
 /**
  * Class Settings
@@ -46,7 +47,7 @@ class Settings extends \EMerchantPay\Base\Settings
      *
      * @var string
      */
-    static protected $prefix = EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX;
+    protected static $prefix = EMERCHANTPAY_CHECKOUT_SETTINGS_PREFIX;
 
     /**
      * Gets a list of the available transaction types for a payment method
@@ -146,7 +147,7 @@ class Settings extends \EMerchantPay\Base\Settings
     public static function getAvailableCheckoutLanguages()
     {
         $data     = array();
-        $isoCodes = \Genesis\API\Constants\i18n::getAll();
+        $isoCodes = \Genesis\Api\Constants\i18n::getAll();
 
         foreach ($isoCodes as $isoCode) {
             $data[$isoCode] = TransactionsHelper::getLanguageByIsoCode($isoCode);
@@ -187,7 +188,7 @@ class Settings extends \EMerchantPay\Base\Settings
         $transaction_types = static::getSetting("TRANSACTION_TYPES");
 
         // Trim selected values for payment types and reorder them
-        return static::_orderCardTransactionTypes(
+        return static::orderCardTransactionTypes(
             array_map(
                 'trim',
                 explode(
@@ -283,9 +284,9 @@ class Settings extends \EMerchantPay\Base\Settings
      *
      * @return array
      */
-    private static function _orderCardTransactionTypes($selected_types)
+    private static function orderCardTransactionTypes($selected_types)
     {
-        $order = \Genesis\API\Constants\Transaction\Types::getCardTransactionTypes();
+        $order = \Genesis\Api\Constants\Transaction\Types::getCardTransactionTypes();
 
         asort($selected_types);
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2018 emerchantpay Ltd.
  *
@@ -19,20 +20,20 @@
 
 require DIR_FS_CATALOG . DIR_WS_INCLUDES . "modules/payment/emerchantpay/code/vendor/autoload.php";
 
-use \EMerchantPay\Checkout\Installer          as EMerchantPayCheckoutInstaller;
-use \EMerchantPay\Checkout\Settings           as EMerchantPayCheckoutSettings;
-use \EMerchantPay\Checkout\Transaction        as EMerchantPayCheckoutTransaction;
-use \EMerchantPay\Checkout\TransactionProcess as EMerchantPayCheckoutTransactionProcess;
-use \EMerchantPay\Checkout\Notification       as EMerchantPayCheckoutNotification;
+use EMerchantPay\Checkout\Installer          as EMerchantPayCheckoutInstaller;
+use EMerchantPay\Checkout\Settings           as EMerchantPayCheckoutSettings;
+use EMerchantPay\Checkout\Transaction        as EMerchantPayCheckoutTransaction;
+use EMerchantPay\Checkout\TransactionProcess as EMerchantPayCheckoutTransactionProcess;
+use EMerchantPay\Checkout\Notification       as EMerchantPayCheckoutNotification;
 
-class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
+class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod // phpcs:ignore
 {
     /**
      * Check if the module is installed
      *
      * @var bool
      */
-    protected $_check;
+    protected $check;
 
     /**
      * Generate Reference Transaction (Capture, Refund, Void)
@@ -53,7 +54,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     {
         $data->params['modal'] = array(
             'capture' => array(
-                'allowed' => EMerchantPayCheckoutSettings::getIsPartialCaptureAllowed(),
+                'allowed' => EMerchantPayCheckoutSettings::isPartialCaptureAllowed(),
                 'form' => array(
                     'action' => 'doCapture',
                 ),
@@ -62,7 +63,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
                 )
             ),
             'refund' => array(
-                'allowed' => EMerchantPayCheckoutSettings::getIsPartialRefundAllowed(),
+                'allowed' => EMerchantPayCheckoutSettings::isPartialRefundAllowed(),
                 'form' => array(
                     'action' => 'doRefund',
                 ),
@@ -71,7 +72,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
                 )
             ),
             'void' => array(
-                'allowed' => EMerchantPayCheckoutSettings::getIsVoidTransactionAllowed(),
+                'allowed' => EMerchantPayCheckoutSettings::isVoidTransactionAllowed(),
                 'form' => array(
                     'action' => 'doVoid',
                 ),
@@ -192,17 +193,17 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     protected function doPerformOrderStatusHistory($data)
     {
         switch ($data['transaction_type']) {
-            case \Genesis\API\Constants\Transaction\Types::CAPTURE:
+            case \Genesis\Api\Constants\Transaction\Types::CAPTURE:
                 $data['type'] = 'Captured';
                 $data['order_status_id'] = EMerchantPayCheckoutSettings::getProcessedOrderStatusID();
                 break;
 
-            case \Genesis\API\Constants\Transaction\Types::REFUND:
+            case \Genesis\Api\Constants\Transaction\Types::REFUND:
                 $data['type'] = 'Refunded';
                 $data['order_status_id'] = EMerchantPayCheckoutSettings::getRefundedOrderStatusID();
                 break;
 
-            case \Genesis\API\Constants\Transaction\Types::VOID:
+            case \Genesis\Api\Constants\Transaction\Types::VOID:
                 $data['type'] = 'Voided';
                 $data['order_status_id'] = EMerchantPayCheckoutSettings::getCanceledOrderStatusID();
                 break;
@@ -282,16 +283,16 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function check()
     {
         global $db;
-        if (!isset($this->_check)) {
+        if (!isset($this->check)) {
             $check_query =
                 $db->Execute(
                     "select configuration_value from " . TABLE_CONFIGURATION . "
                      where configuration_key = '" .
                         EMerchantPayCheckoutSettings::getCompleteSettingKey("STATUS") . "'"
                 );
-            $this->_check = $check_query->RecordCount();
+            $this->check = $check_query->RecordCount();
         }
-        return $this->_check;
+        return $this->check;
     }
 
     /**
@@ -308,23 +309,23 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.2.5";
+        $this->version = "1.2.6";
         parent::__construct();
     }
 
     protected function init()
     {
-        $this->enabled = EMerchantPayCheckoutSettings::getStatus();
+        $this->enabled = EMerchantPayCheckoutSettings::isEnabled();
         if (IS_ADMIN_FLAG === true) {
             // Payment module title in Admin
             $this->title = MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_TEXT_TITLE;
 
-            if (EMerchantPayCheckoutSettings::getIsInstalled()) {
-                if (!EMerchantPayCheckoutSettings::getIsConfigured()) {
+            if (EMerchantPayCheckoutSettings::isInstalled()) {
+                if (!EMerchantPayCheckoutSettings::isConfigured()) {
                     $this->title .= '<span class="alert"> (Not Configured)</span>';
-                } elseif (!EMerchantPayCheckoutSettings::getStatus()) {
+                } elseif (!EMerchantPayCheckoutSettings::isEnabled()) {
                     $this->title .= '<span class="alert"> (Disabled)</span>';
-                } elseif (!EMerchantPayCheckoutSettings::getIsLiveMode()) {
+                } elseif (!EMerchantPayCheckoutSettings::isLiveMode()) {
                     $this->title .= '<span class="alert-warning"> (Staging Mode)</span>';
                 } else {
                     $this->title .= '<span class="alert-success"> (Live Mode)</span>';
@@ -356,7 +357,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
      * calculate zone matches and flag settings to determine whether this module should display to customers or not
      *
      */
-    public function update_status()
+    public function update_status() // phpcs:ignore
     {
         $this->enabled = EMerchantPayCheckoutSettings::getIsAvailableOnCheckoutPage();
     }
@@ -378,7 +379,6 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
         );
 
         return $selection;
-
     }
 
     /**
@@ -387,8 +387,11 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
      * This method will try to create a new WPF instance
      * if successful - we redirect the customer on "after_process" to the newly created instance
      * if unsuccessful - we show them an error message and redirecting back to the CHECKOUT PAYMENT PAGE
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.MissingImport)
      */
-    public function before_process()
+    public function before_process() // phpcs:ignore
     {
         global $order, $messageStack;
 
@@ -429,9 +432,9 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
         $errorMessage = null;
 
         try {
-            $this->responseObject = EMerchantPayCheckoutTransactionProcess::pay(
-                $data
-            );
+            $response = EMerchantPayCheckoutTransactionProcess::pay($data);
+
+            $this->responseObject = $response->getResponseObject();
 
             if (isset($this->responseObject->consumer_id)) {
                 EMerchantPayCheckoutTransactionProcess::saveConsumerId(
@@ -439,9 +442,12 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
                 );
             }
 
-            return true;
-        } catch (\Genesis\Exceptions\ErrorAPI $api) {
-            $errorMessage = $api->getMessage();
+            if ($response->isSuccessful()) {
+                return true;
+            }
+
+            $errorMessage = !empty($this->responseObject->message) ? $this->responseObject->message :
+                MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_MESSAGE_PAYMENT_FAILED;
             $this->responseObject = null;
         } catch (\Genesis\Exceptions\ErrorNetwork $e) {
             $errorMessage = MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_MESSAGE_CHECK_CREDENTIALS .
@@ -470,9 +476,9 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod
      * @param int $zf_order_id
      * @return string
      */
-    public function admin_notification($zf_order_id)
+    public function admin_notification($zf_order_id) // phpcs:ignore
     {
-        if (EMerchantPayCheckoutSettings::getIsInstalled()) {
+        if (EMerchantPayCheckoutSettings::isInstalled()) {
             return parent::admin_notification($zf_order_id);
         } else {
             return false;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * emerchantpay Checkout English Language file
  *
@@ -11,6 +12,7 @@
  * @since       1.0.0
  */
 
+// phpcs:disable
 define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_TEXT_TITLE', 'emerchantpay Checkout');
 define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_TEXT_PUBLIC_CHECKOUT_CONTAINER', '<img style="border: 0px none; margin-left: 50pt; display: block" src="images/emerchantpay/logos/emp_checkout.png" /> <br> <span style="display: block; font-weight: bold; margin-left: 50pt;">emerchantpay offers a secure way to pay for your order, using Credit/Debit/Prepaid Card, e-Wallet or Vouchers.</span> <br /> <span style="display: block; font-style: italic; margin-left: 50pt;">Notice: You will be redirected to emerchantpay\'s Secure Checkout Page, in order to complete your payment!</span>');
 define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_TEXT_PUBLIC_TITLE', 'emerchantpay Checkout <img style="border: 0px none;display:block"src="images/emerchantpay/logos/emp_checkout.png" />');
@@ -51,6 +53,4 @@ define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_LABEL_ORDER_TRANS_HEADER_ACTION_VOI
 
 define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_LABEL_ORDER_TRANS_MODAL_AMOUNT_LABEL_CAPTURE', 'Capture amount');
 define('MODULE_PAYMENT_EMERCHANTPAY_CHECKOUT_LABEL_ORDER_TRANS_MODAL_AMOUNT_LABEL_REFUND', 'Refund amount');
-
-
-
+// phpcs:enable
