@@ -1,7 +1,7 @@
 {
     "name": "emerchantpay/zencart-emerchantpay-plugin",
     "description": "emerchantpay Gateway Module for Zen Cart",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "license": "GPL-2.0",
     "authors": [
         {

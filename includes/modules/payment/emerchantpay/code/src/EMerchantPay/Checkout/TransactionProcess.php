@@ -253,32 +253,22 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
 
         $selectedTypes = EMerchantPayCheckoutSettings::getTransactionTypes();
 
-        $pproSuffix    = PPRO_TRANSACTION_SUFFIX;
-        $methods       = Methods::getMethods();
-
-        foreach ($methods as $method) {
-            $aliasMap[$method . $pproSuffix] = Types::PPRO;
-        }
-
-        $aliasMap = array_merge(
-            $aliasMap,
-            [
-                GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE =>
-                    Types::GOOGLE_PAY,
-                GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_SALE      =>
-                    Types::GOOGLE_PAY,
-                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_AUTHORIZE         =>
-                    Types::PAY_PAL,
-                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_SALE              =>
-                    Types::PAY_PAL,
-                PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_EXPRESS           =>
-                    Types::PAY_PAL,
-                APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_AUTHORIZE   =>
-                    Types::APPLE_PAY,
-                APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_SALE        =>
-                    Types::APPLE_PAY,
-            ]
-        );
+        $aliasMap = [
+            GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE =>
+                Types::GOOGLE_PAY,
+            GOOGLE_PAY_TRANSACTION_PREFIX . GOOGLE_PAY_PAYMENT_TYPE_SALE      =>
+                Types::GOOGLE_PAY,
+            PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_AUTHORIZE         =>
+                Types::PAY_PAL,
+            PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_SALE              =>
+                Types::PAY_PAL,
+            PAYPAL_TRANSACTION_PREFIX . PAYPAL_PAYMENT_TYPE_EXPRESS           =>
+                Types::PAY_PAL,
+            APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_AUTHORIZE   =>
+                Types::APPLE_PAY,
+            APPLE_PAY_TRANSACTION_PREFIX . APPLE_PAY_PAYMENT_TYPE_SALE        =>
+                Types::APPLE_PAY,
+        ];
 
         foreach ($selectedTypes as $selectedType) {
             if (array_key_exists($selectedType, $aliasMap)) {
@@ -291,7 +281,6 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                 $processedList[$transactionType]['parameters'][] = array(
                     $key => str_replace(
                         [
-                            $pproSuffix,
                             GOOGLE_PAY_TRANSACTION_PREFIX,
                             PAYPAL_TRANSACTION_PREFIX,
                             APPLE_PAY_TRANSACTION_PREFIX
@@ -578,9 +567,6 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
     private static function getCustomParameterKey($transactionType)
     {
         switch ($transactionType) {
-            case Types::PPRO:
-                $result = 'payment_method';
-                break;
             case Types::PAY_PAL:
                 $result = 'payment_type';
                 break;

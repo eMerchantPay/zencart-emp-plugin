@@ -37,7 +37,6 @@ define(
     DB_PREFIX . 'emerchantpay_checkout_consumers'
 );
 
-define('PPRO_TRANSACTION_SUFFIX', '_ppro');
 define('GOOGLE_PAY_TRANSACTION_PREFIX', 'google_pay_');
 define('GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE', 'authorize');
 define('GOOGLE_PAY_PAYMENT_TYPE_SALE', 'sale');

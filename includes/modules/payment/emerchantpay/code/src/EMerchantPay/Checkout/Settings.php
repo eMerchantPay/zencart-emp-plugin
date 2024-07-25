@@ -76,14 +76,6 @@ class Settings extends \EMerchantPay\Base\Settings
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
-        // Add PPRO types
-        $pproTypes = array_map(
-            function ($type) {
-                return $type . PPRO_TRANSACTION_SUFFIX;
-            },
-            Methods::getMethods()
-        );
-
         // Add Google Pay types
         $googlePayTypes = array_map(
             function ($type) {
@@ -120,7 +112,6 @@ class Settings extends \EMerchantPay\Base\Settings
 
         $transactionTypes = array_merge(
             $transactionTypes,
-            $pproTypes,
             $googlePayTypes,
             $payPalTypes,
             $applePayTypes
