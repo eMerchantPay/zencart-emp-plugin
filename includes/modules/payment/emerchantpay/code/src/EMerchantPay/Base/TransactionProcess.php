@@ -63,7 +63,8 @@ class TransactionProcess
     public static function bootstrap()
     {
         if (!class_exists('\Genesis\Genesis', false)) {
-            include DIR_FS_CATALOG . DIR_WS_INCLUDES . 'modules/payment/emerchantpay/libs/genesis/vendor/autoload.php';
+            include DIR_FS_CATALOG . DIR_WS_INCLUDES .
+                'modules/payment/emerchantpay/libs/genesis/vendor/autoload.php';
         }
 
         static::doLoadGenesisPrivateConfigValues();
@@ -122,16 +123,14 @@ class TransactionProcess
                     ->setCurrency($data->currency);
             }
 
-            $klarnaCapture = Types::getCaptureTransactionClass(
-                Types::KLARNA_AUTHORIZE
-            );
-            $klarnaRefund  = Types::getRefundTransactionClass(Types::KLARNA_CAPTURE);
+            $invoiceCapture = Types::getCaptureTransactionClass(Types::INVOICE);
+            $invoiceRefund  = Types::getRefundTransactionClass(Types::INVOICE_CAPTURE);
 
             if (
-                $transaction_class === $klarnaCapture
-                || $transaction_class === $klarnaRefund
+                $transaction_class === $invoiceCapture
+                || $transaction_class === $invoiceRefund
             ) {
-                $items = TransactionsHelper::getKlarnaCustomParamItems($order);
+                $items = TransactionsHelper::getInvoiceCustomParamItems($order);
 
                 $genesis
                     ->request()

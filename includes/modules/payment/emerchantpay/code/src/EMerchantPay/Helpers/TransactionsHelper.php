@@ -20,9 +20,12 @@
 
 namespace EMerchantPay\Helpers;
 
+use Genesis\Api\Constants\Financial\Alternative\Transaction\ItemTypes;
 use Genesis\Api\Constants\Transaction\Types;
-use Genesis\Api\Request\Financial\Alternatives\Klarna\Item;
-use Genesis\Api\Request\Financial\Alternatives\Klarna\Items;
+use Genesis\Api\Request\Financial\Alternatives\Transaction\Item;
+use Genesis\Api\Request\Financial\Alternatives\Transaction\Items;
+use Genesis\Exceptions\ErrorParameter;
+use Genesis\Exceptions\InvalidArgument;
 
 /**
  * Class TransactionsHelper
@@ -95,54 +98,56 @@ class TransactionsHelper
     }
 
     /**
-     * Build Klarna Items from Order
+     * Build Invoice Items from Order
      *
      * @param \order $order Order details
      *
      * @return Items
-     * @throws \Genesis\Exceptions\ErrorParameter
+     * @throws ErrorParameter|InvalidArgument
      */
-    public static function getKlarnaCustomParamItems($order)
+    public static function getInvoiceCustomParamItems($order)
     {
-        $items = new Items($order->info['currency']);
+        $items = new Items();
+        $items->setCurrency($order->info['currency']);
 
         foreach ($order->products as $product) {
             $productType = $product['products_virtual'] ?
-                Item::ITEM_TYPE_DIGITAL : Item::ITEM_TYPE_PHYSICAL;
+                ItemTypes::DIGITAL : ItemTypes::PHYSICAL;
 
-            $klarnaItem = new Item(
-                $product['name'],
-                $productType,
-                $product['qty'],
-                $product['final_price']
-            );
-            $items->addItem($klarnaItem);
+            $invoiceItem = new Item();
+            $invoiceItem
+                ->setName($product['name'])
+                ->setItemType($productType)
+                ->setQuantity($product['qty'])
+                ->setUnitPrice($product['final_price']);
+
+            $items->addItem($invoiceItem);
         }
 
         $taxes = floatval($order->info['tax']);
         if ($taxes) {
-            $items->addItem(
-                new Item(
-                    'Taxes',
-                    Item::ITEM_TYPE_SURCHARGE,
-                    1,
-                    $taxes
-                )
-            );
+            $invoiceItem = new Item();
+            $invoiceItem
+                ->setName('Taxes')
+                ->setItemType(ItemTypes::SURCHARGE)
+                ->setQuantity(1)
+                ->setUnitPrice($taxes);
+
+            $items->addItem($invoiceItem);
         }
 
         $shippingCost = array_key_exists('shipping_cost', $order->info) ?
             $order->info['shipping_cost'] :
             static::getShippingValueFromTotals($order->totals);
         if ($shippingCost) {
-            $items->addItem(
-                new Item(
-                    'Shupping Costs',
-                    Item::ITEM_TYPE_SHIPPING_FEE,
-                    1,
-                    $shippingCost
-                )
-            );
+            $invoiceItem = new Item();
+            $invoiceItem
+                ->setName('Shipping Costs')
+                ->setItemType(ItemTypes::SHIPPING_FEE)
+                ->setQuantity(1)
+                ->setUnitPrice($shippingCost);
+
+            $items->addItem($invoiceItem);
         }
 
         return $items;

@@ -24,7 +24,6 @@ use EMerchantPay\Checkout\Settings as EMerchantPayCheckoutSettings;
 use EMerchantPay\Checkout\Transaction as EMerchantPayCheckoutTransaction;
 use EMerchantPay\Helpers\ThreedsHelper;
 use EMerchantPay\Helpers\TransactionsHelper;
-use Genesis\Api\Constants\Payment\Methods;
 use Genesis\Api\Constants\Transaction\States;
 use Genesis\Api\Constants\Transaction\Types;
 use Genesis\Api\Response;
@@ -190,17 +189,17 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
         $parameters = array();
 
         switch ($transactionType) {
-            case \Genesis\Api\Constants\Transaction\Types::IDEBIT_PAYIN:
-            case \Genesis\Api\Constants\Transaction\Types::INSTA_DEBIT_PAYIN:
+            case Types::IDEBIT_PAYIN:
+            case Types::INSTA_DEBIT_PAYIN:
                 $parameters = array(
                 'customer_account_id' => static::getCurrentUserIdHash()
                 );
                 break;
-            case \Genesis\Api\Constants\Transaction\Types::KLARNA_AUTHORIZE:
-                $items      = TransactionsHelper::getKlarnaCustomParamItems($order);
+            case Types::INVOICE:
+                $items      = TransactionsHelper::getInvoiceCustomParamItems($order);
                 $parameters = $items->toArray();
                 break;
-            case \Genesis\Api\Constants\Transaction\Types::TRUSTLY_SALE:
+            case Types::TRUSTLY_SALE:
                 $userId = static::getCustomerId();
                 $trustlyUserId = empty($userId) ?
                 static::getCurrentUserIdHash() : $userId;
@@ -225,7 +224,7 @@ class TransactionProcess extends \EMerchantPay\Base\TransactionProcess
                     );
                 }
                 break;
-            case \Genesis\Api\Constants\Transaction\Types::PAYSAFECARD:
+            case Types::PAYSAFECARD:
                 $userId = static::getCustomerId();
                 $customerId = empty($userId) ?
                 static::getCurrentUserIdHash() : $userId;

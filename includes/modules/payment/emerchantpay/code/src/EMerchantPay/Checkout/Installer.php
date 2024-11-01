@@ -48,7 +48,9 @@ class Installer extends \EMerchantPay\Base\Installer
 
         if (EmpCheckoutSettings::isInstalled()) {
             $messageStack->add_session('emerchantpay Checkout module already installed.', 'error');
-            zen_redirect(zen_href_link(FILENAME_MODULES, 'set=payment&module=' . EMERCHANTPAY_CHECKOUT_CODE, 'NONSSL'));
+            zen_redirect(
+                zen_href_link(FILENAME_MODULES, 'set=payment&module=' . EMERCHANTPAY_CHECKOUT_CODE, 'NONSSL')
+            );
             return 'failed';
         }
 
