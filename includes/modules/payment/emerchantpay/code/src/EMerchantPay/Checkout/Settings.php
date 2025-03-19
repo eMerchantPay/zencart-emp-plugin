@@ -231,7 +231,7 @@ class Settings extends \EMerchantPay\Base\Settings
             Banks::BCT => 'Bancontact',
             Banks::BLK => 'BLIK',
             Banks::SE  => 'SPEI',
-            Banks::PID => 'LatiPay'
+            Banks::PID => 'PayID'
         ];
     }
 

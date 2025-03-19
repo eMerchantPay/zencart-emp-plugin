@@ -8,8 +8,8 @@ This is a Payment Module for Zen Cart, that gives you the ability to process pay
 Requirements
 ------------
 
-* Zen Cart 1.5.x(Tested up to 2.0.1)
-* [GenesisPHP v2.0.3](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.3) - (Integrated in Module)
+* Zen Cart 1.5.x(Tested up to 2.1.0)
+* [GenesisPHP v2.1.2](https://github.com/GenesisGateway/genesis_php/releases/tag/2.1.2) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -76,7 +76,7 @@ Supported Transactions & Payment Methods
     * __Bancontact (BTC)__
     * __BLIK (BLK)__
     * __SPEI (SE)__
-    * __LatiPay (PID)__
+    * __PayID (PID)__
   * __OXXO__
   * __P24__
   * __Pago Facil__

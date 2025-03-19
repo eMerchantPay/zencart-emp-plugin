@@ -309,7 +309,7 @@ class emerchantpay_checkout extends \EMerchantPay\Base\PaymentMethod // phpcs:ig
     public function __construct()
     {
         $this->code = EMERCHANTPAY_CHECKOUT_CODE;
-        $this->version = "1.3.0";
+        $this->version = "1.3.1";
         parent::__construct();
     }
 
