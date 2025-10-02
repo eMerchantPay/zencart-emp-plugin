@@ -24,60 +24,59 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Constants\Transaction\Parameters\OnlineBanking;
+namespace Genesis\Api\Constants\Transaction\Parameters;
 
-use Genesis\Utils\Common;
+use Genesis\Utils\Common as CommonUtils;
 
 /**
- * Used for Online Banking PayIn Payment Types
+ * Digital Asset Types
  *
- * Class PaymentTypes
- * @package Genesis\Api\Constants\Transaction\Parameters\OnlineBanking
+ * @package Genesis\Api\Constants\Transaction\Parameters
  */
-class PaymentTypes
+class DigitalAssetTypes
 {
-    /**
-     * Payment Type Online Banking
+/**
+     * Default crypto flag
+     *
+     * @var string
      */
-    const ONLINE_BANKING = 'online_banking';
+    const CRYPTO                  = 'crypto';
 
     /**
-     * Payment Type Qr Payment
+     * Central Bank Digital Currency or tokenized deposits
+     *
+     * @var string
      */
-    const PAYMENT        = 'qr_payment';
+    const CBDC                    = 'cbdc';
 
     /**
-     * Payment Type Quick Payment
+     * Stablecoin (Fiat-backed)
+     *
+     * @var string
      */
-    const QUICK_PAYMENT  = 'quick_payment';
+    const STABLECOIN              = 'stablecoin';
 
     /**
-     * Payment Type Netbanking
+     * Blockchain native token/coin
+     *
+     * @var string
      */
-    const NETBANKING     = 'netbanking';
+    const BLOCKCHAIN_NATIVE_TOKEN = 'blockchain_native_token';
 
     /**
-     * Payment Type AliPay QR
+     * Non-fungible token
+     *
+     * @var string
      */
-    const ALIPAY_QR      = 'alipay_qr';
+    const NFT                     = 'nft';
 
     /**
-     * Payment Type Scotiabank
-     */
-    const SCOTIABANK     = 'scotiabank';
-
-    /**
-     * Payment Type SPEI
-     */
-    const SPEI           = 'spei';
-
-    /**
-     * Get all available Payment Types
+     * Get All Digital Asset Types
      *
      * @return array
      */
     public static function getAll()
     {
-        return array_values(Common::getClassConstants(self::class));
+        return CommonUtils::getClassConstants(self::class);
     }
 }

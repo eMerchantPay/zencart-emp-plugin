@@ -24,60 +24,37 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Constants\Transaction\Parameters\OnlineBanking;
+namespace Genesis\Api\Traits\Request\NonFinancial;
 
-use Genesis\Utils\Common;
+use Genesis\Exceptions\EnvironmentNotSet;
 
 /**
- * Used for Online Banking PayIn Payment Types
+ * Trait PayeeAccountAttributes
+ * @package Genesis\Api\Traits\Request\NonFinancial
  *
- * Class PaymentTypes
- * @package Genesis\Api\Constants\Transaction\Parameters\OnlineBanking
+ * @method string getAccountUniqueId() Returns the unique identifier of the Account
  */
-class PaymentTypes
+trait PayeeAccountAttributes
 {
     /**
-     * Payment Type Online Banking
-     */
-    const ONLINE_BANKING = 'online_banking';
-
-    /**
-     * Payment Type Qr Payment
-     */
-    const PAYMENT        = 'qr_payment';
-
-    /**
-     * Payment Type Quick Payment
-     */
-    const QUICK_PAYMENT  = 'quick_payment';
-
-    /**
-     * Payment Type Netbanking
-     */
-    const NETBANKING     = 'netbanking';
-
-    /**
-     * Payment Type AliPay QR
-     */
-    const ALIPAY_QR      = 'alipay_qr';
-
-    /**
-     * Payment Type Scotiabank
-     */
-    const SCOTIABANK     = 'scotiabank';
-
-    /**
-     * Payment Type SPEI
-     */
-    const SPEI           = 'spei';
-
-    /**
-     * Get all available Payment Types
+     * The unique identifier of the Account
      *
-     * @return array
+     * @var string
      */
-    public static function getAll()
+    protected $account_unique_id;
+
+    /**
+     * Sets the account unique ID
+     *
+     * @param string $value
+     * @return $this
+     * @throws EnvironmentNotSet
+     */
+    public function setAccountUniqueId($value)
     {
-        return array_values(Common::getClassConstants(self::class));
+        $this->account_unique_id = $value;
+        $this->updateRequestPath();
+
+        return $this;
     }
 }

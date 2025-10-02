@@ -24,60 +24,65 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Constants\Transaction\Parameters\OnlineBanking;
+namespace Genesis\Api\Traits\Request\Financial\Cards;
 
-use Genesis\Utils\Common;
+use Genesis\Exceptions\InvalidArgument;
 
 /**
- * Used for Online Banking PayIn Payment Types
+ * Trait TokenizationParamsAttributes
  *
- * Class PaymentTypes
- * @package Genesis\Api\Constants\Transaction\Parameters\OnlineBanking
+ * @package Genesis\Api\Traits\Request\Financial\Cards
+ *
+ * @method string getTokenizationTavv()
+ * @method string getTokenizationEci()
+ * @method setTokenizationTavv(string $tavv)
  */
-class PaymentTypes
+trait TokenizationParamsAttributes
 {
     /**
-     * Payment Type Online Banking
+     * Tokenization tavv
+     *
+     * @var string
      */
-    const ONLINE_BANKING = 'online_banking';
+    protected $tokenization_tavv;
 
     /**
-     * Payment Type Qr Payment
+     * Tokenization eci
+     *
+     * @var string
      */
-    const PAYMENT        = 'qr_payment';
+    protected $tokenization_eci;
 
     /**
-     * Payment Type Quick Payment
+     * Set the tokenization eci
+     *
+     * @param string $value
+     *
+     * @return $this
+     *
+     * @throws InvalidArgument
      */
-    const QUICK_PAYMENT  = 'quick_payment';
+    public function setTokenizationEci($value)
+    {
+        if ($value === null) {
+            $this->tokenization_eci = null;
+
+            return $this;
+        }
+
+        return $this->setLimitedString('tokenization_eci', $value, null, 2);
+    }
 
     /**
-     * Payment Type Netbanking
-     */
-    const NETBANKING     = 'netbanking';
-
-    /**
-     * Payment Type AliPay QR
-     */
-    const ALIPAY_QR      = 'alipay_qr';
-
-    /**
-     * Payment Type Scotiabank
-     */
-    const SCOTIABANK     = 'scotiabank';
-
-    /**
-     * Payment Type SPEI
-     */
-    const SPEI           = 'spei';
-
-    /**
-     * Get all available Payment Types
+     * Return the tokenization parameters attributes structure
      *
      * @return array
      */
-    public static function getAll()
+    protected function tokenizationParamsAttributesStructure()
     {
-        return array_values(Common::getClassConstants(self::class));
+        return [
+            'tavv' => $this->tokenization_tavv,
+            'eci'  => $this->tokenization_eci
+        ];
     }
 }

@@ -24,60 +24,50 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Constants\Transaction\Parameters\OnlineBanking;
+namespace Genesis\Api\Traits\Request;
 
-use Genesis\Utils\Common;
+use Genesis\Api\Constants\Transaction\Parameters\DigitalAssetTypes;
+use Genesis\Exceptions\InvalidArgument;
 
 /**
- * Used for Online Banking PayIn Payment Types
+ * Digital Asset Type Attributes
  *
- * Class PaymentTypes
- * @package Genesis\Api\Constants\Transaction\Parameters\OnlineBanking
+ * @package Genesis\Api\Traits\Request
+ *
+ * @method $string getDigitalAssetType()
  */
-class PaymentTypes
+trait DigitalAssetTypeAttributes
 {
     /**
-     * Payment Type Online Banking
-     */
-    const ONLINE_BANKING = 'online_banking';
-
-    /**
-     * Payment Type Qr Payment
-     */
-    const PAYMENT        = 'qr_payment';
-
-    /**
-     * Payment Type Quick Payment
-     */
-    const QUICK_PAYMENT  = 'quick_payment';
-
-    /**
-     * Payment Type Netbanking
-     */
-    const NETBANKING     = 'netbanking';
-
-    /**
-     * Payment Type AliPay QR
-     */
-    const ALIPAY_QR      = 'alipay_qr';
-
-    /**
-     * Payment Type Scotiabank
-     */
-    const SCOTIABANK     = 'scotiabank';
-
-    /**
-     * Payment Type SPEI
-     */
-    const SPEI           = 'spei';
-
-    /**
-     * Get all available Payment Types
+     * The Digital Asset Type
      *
-     * @return array
+     * @var string $digital_asset_type
      */
-    public static function getAll()
+    protected $digital_asset_type;
+
+    /**
+     * The Digital Asset Type
+     *
+     * @var string $digital_asset_type
+     *
+     * @return $this
+     *
+     * @throws InvalidArgument
+     */
+    public function setDigitalAssetType($value)
     {
-        return array_values(Common::getClassConstants(self::class));
+        if (empty($value)) {
+            $this->digital_asset_type = null;
+
+            return $this;
+        }
+
+        return $this->allowedOptionsSetter(
+            'digital_asset_type',
+            DigitalAssetTypes::getAll(),
+            $value,
+            'Invalid Digital Asset Type provided. Allowed values are: ' .
+            implode(', ', DigitalAssetTypes::getAll())
+        );
     }
 }

@@ -24,60 +24,39 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Constants\Transaction\Parameters\OnlineBanking;
+namespace Genesis\Api\Traits\Request\NonFinancial;
 
-use Genesis\Utils\Common;
+use Genesis\Exceptions\EnvironmentNotSet;
 
 /**
- * Used for Online Banking PayIn Payment Types
+ * Trait PayeeAttributes
+ * @package Genesis\Api\Traits\Request\NonFinancial
  *
- * Class PaymentTypes
- * @package Genesis\Api\Constants\Transaction\Parameters\OnlineBanking
+ * @method string getPayeeUniqueId() Returns the unique identifier of the Payee
  */
-class PaymentTypes
+trait PayeeAttributes
 {
     /**
-     * Payment Type Online Banking
-     */
-    const ONLINE_BANKING = 'online_banking';
-
-    /**
-     * Payment Type Qr Payment
-     */
-    const PAYMENT        = 'qr_payment';
-
-    /**
-     * Payment Type Quick Payment
-     */
-    const QUICK_PAYMENT  = 'quick_payment';
-
-    /**
-     * Payment Type Netbanking
-     */
-    const NETBANKING     = 'netbanking';
-
-    /**
-     * Payment Type AliPay QR
-     */
-    const ALIPAY_QR      = 'alipay_qr';
-
-    /**
-     * Payment Type Scotiabank
-     */
-    const SCOTIABANK     = 'scotiabank';
-
-    /**
-     * Payment Type SPEI
-     */
-    const SPEI           = 'spei';
-
-    /**
-     * Get all available Payment Types
+     * Payee unique ID
      *
-     * @return array
+     * The unique identifier of the Payee
+     *
+     * @var string
      */
-    public static function getAll()
+    protected $payee_unique_id;
+
+    /**
+     * Sets the payee unique ID
+     *
+     * @param string $value
+     * @return $this
+     * @throws EnvironmentNotSet
+     */
+    public function setPayeeUniqueId($value)
     {
-        return array_values(Common::getClassConstants(self::class));
+        $this->payee_unique_id = $value;
+        $this->updateRequestPath();
+
+        return $this;
     }
 }

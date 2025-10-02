@@ -24,48 +24,42 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\Api\Request\Financial\OnlineBankingPayments\Idebit;
+namespace Genesis\Api\Request\Financial\Payout;
 
-use Genesis\Api\Traits\Request\AddressInfoAttributes;
+use Genesis\Api\Constants\Transaction\Types;
+use Genesis\Api\Request\Base\Financial;
+use Genesis\Api\Traits\Request\CustomerAddress\BillingInfoAttributes;
 use Genesis\Api\Traits\Request\Financial\PaymentAttributes;
-use Genesis\Utils\Common;
+use Genesis\Utils\Common as CommonUtils;
 
 /**
- * Class Payin
+ * Class GlobalPayout
  *
- * iDebit Payin - Online Banking ePayments (oBeP)
+ * Global Payout is a transaction type based on Open Banking APIs, used for initiating bank payments
  *
- * @package Genesis\Api\Request\Financial\OnlineBankingPayments\Idebit
+ * @package Genesis\Api\Request\Financial\Payout
  *
- * @method Payin setCustomerAccountId($value) Set Unique consumer account ID
- * @method Payin setReturnUrl($value) Set the URL where customer is sent to after payment
+ * @method $this  setPayeeAccountId($value);
+ * @method string getPayeeAccountId()
  */
-class Payin extends \Genesis\Api\Request\Base\Financial
+class GlobalPayout extends Financial
 {
-    use AddressInfoAttributes;
+    use BillingInfoAttributes;
     use PaymentAttributes;
 
     /**
-     * Unique consumer account ID
+     * Unique Account ID of the Payee
      *
      * @var string
      */
-    protected $customer_account_id;
+    protected $payee_account_id;
 
     /**
-     * URL where customer is sent to after payment
-     *
-     * @var string
-     */
-    protected $return_url;
-
-    /**
-     * Returns the Request transaction type
      * @return string
      */
     protected function getTransactionType()
     {
-        return \Genesis\Api\Constants\Transaction\Types::IDEBIT_PAYIN;
+        return Types::GLOBAL_PAYOUT;
     }
 
     /**
@@ -79,33 +73,24 @@ class Payin extends \Genesis\Api\Request\Base\Financial
             'transaction_id',
             'amount',
             'currency',
-            'customer_account_id',
-            'billing_country'
+            'payee_account_id'
         ];
 
-        $this->requiredFields = Common::createArrayObject($requiredFields);
-
-        $requiredFieldValues = [
-            'billing_country' => ['CA']
-        ];
-
-        $this->requiredFieldValues = Common::createArrayObject($requiredFieldValues);
+        $this->requiredFields = CommonUtils::createArrayObject($requiredFields);
     }
 
     /**
      * Return additional request attributes
+     *
      * @return array
      */
     protected function getPaymentTransactionStructure()
     {
         return [
-            'amount'              => $this->transformAmount($this->amount, $this->currency),
-            'currency'            => $this->currency,
-            'customer_account_id' => $this->customer_account_id,
-            'customer_email'      => $this->customer_email,
-            'customer_phone'      => $this->customer_phone,
-            'billing_address'     => $this->getBillingAddressParamsStructure(),
-            'shipping_address'    => $this->getShippingAddressParamsStructure()
+            'amount'           => $this->transformAmount($this->amount, $this->currency),
+            'currency'         => $this->currency,
+            'payee_account_id' => $this->payee_account_id,
+            'billing_address'  => $this->getBillingAddressParamsStructure()
         ];
     }
 }
